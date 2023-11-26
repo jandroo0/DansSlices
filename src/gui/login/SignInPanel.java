@@ -2,6 +2,7 @@ package gui.login;
 
 import config.Config;
 import customComponents.CustomButton;
+import customComponents.CustomLabel;
 import customComponents.CustomPanel;
 import customComponents.PlaceholderTextField;
 
@@ -9,22 +10,26 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SignInPanel extends CustomPanel {
 
     // COMPONENTS
-    private final Label idLabel; // id label
+    private final CustomLabel idLabel; // id label
     private final PlaceholderTextField idField; // id text field
     private final JButton newCustomerButton; // new customer button
     private final CustomButton submitButton; // form submit button
 
     // EVENT LISTENERS
 //    private LoginListener loginListener; // event listener on login event
-//    private NewCustomerListener newCustomerListener; // event listener new customer click event
+    private NewCustomerListener newCustomerListener; // event listener new customer click event
 
     public SignInPanel() {
 
-        idLabel = new Label("PHONE NUMBER", 24); // set text for idLabel
+        idLabel = new CustomLabel("PHONE NUMBER", 24); // set text for idLabel
 
         idField = new PlaceholderTextField(140, 44, 24); // idField
 
@@ -35,6 +40,29 @@ public class SignInPanel extends CustomPanel {
 
         layoutComponents();
         styling();
+        handleEvents();
+
+    }
+
+    public void setNewCustomerListener(NewCustomerListener listener) {
+        this.newCustomerListener = listener;
+    }
+
+
+    // events
+    private void handleEvents() {
+
+
+
+
+
+        // new customer actionListener
+        newCustomerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SignInPanel.this.newCustomerListener.newCustomerEvent();
+            }
+        });
 
     }
 
@@ -51,6 +79,22 @@ public class SignInPanel extends CustomPanel {
         newCustomerButton.setForeground(Color.WHITE);
         newCustomerButton.setBorder(Config.getButtonBorder());
 
+
+
+
+        // mouse listener for hover effects
+        newCustomerButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                newCustomerButton.setForeground(Config.getTextColor());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                newCustomerButton.setForeground(Color.WHITE);
+            }
+        });
 
     }
 

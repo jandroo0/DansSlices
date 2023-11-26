@@ -2,6 +2,7 @@ package gui.login;
 
 import config.Config;
 import customComponents.CustomButton;
+import customComponents.CustomLabel;
 import customComponents.CustomPanel;
 import customComponents.PlaceholderTextField;
 
@@ -9,6 +10,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -21,7 +24,7 @@ public class RegisterPanel extends JPanel{
     private CustomPanel paymentInfoPanel; // payment info panel
     private final CustomPanel buttonPanel; // button panel
 
-    private final Label titleLabel; // title label
+    private final CustomLabel titleLabel; // title label
 
     // INFO FIELDS
 
@@ -44,9 +47,9 @@ public class RegisterPanel extends JPanel{
     private JCheckBox addPaymentBox;// "add payment ?" checkBox
 
 
-//    private CreateAccountListener createAccountListener;
+    private CreateAccountListener createAccountListener;
 
-    public RegisterPanel(Frame frame) {
+    public RegisterPanel() {
 
         setLayout(new BorderLayout()); // set layout to border layout
 
@@ -58,7 +61,7 @@ public class RegisterPanel extends JPanel{
         buttonPanel = new CustomPanel();
 
         // title label
-        titleLabel = new Label("CREATE ACCOUNT", 26);
+        titleLabel = new CustomLabel("CREATE ACCOUNT", 26);
 
 
         //user info fields
@@ -91,8 +94,35 @@ public class RegisterPanel extends JPanel{
 
         layoutComponents();
         styling();
+        handleEvents();
 
-        }
+
+    }
+
+    private void handleEvents() {
+
+
+        // cancel button event
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    clearFields(); // clear fields
+                } catch (BadLocationException ex) {
+                    throw new RuntimeException(ex);
+                }
+                RegisterPanel.this.createAccountListener.cancelEvent();
+
+            }
+        });
+    }
+
+
+
+
+    public void setCreateAccountListener(CreateAccountListener listener) {
+        this.createAccountListener = listener;
+    }
 
 
     private void layoutComponents() {

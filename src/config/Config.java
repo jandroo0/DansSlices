@@ -14,7 +14,7 @@ public class Config {
 
     // COLORS //
 
-    private static final Color backgroundColor = Color.WHITE; // background color
+    private static final Color backgroundColor = Color.GRAY; // background color
 
     // TEXT
 

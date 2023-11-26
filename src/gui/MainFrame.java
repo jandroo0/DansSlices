@@ -1,13 +1,17 @@
 package gui;
 
 import config.Config;
+import gui.login.LoginPanel;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    private TitlePanel titlePanel;
-
+    // PANELS
+    private TitlePanel titlePanel; // title panel
+    private JPanel containerPanel; // main container panel, contains: login panel,
+    private LoginPanel loginPanel; // login panel which contains both the sign in and register screens
 
     public MainFrame() {
         super("DANS SLICES");
@@ -27,15 +31,19 @@ public class MainFrame extends JFrame {
         // title panel
         titlePanel = new TitlePanel();
 
+        loginPanel = new LoginPanel();
 
+        containerPanel = new JPanel(new CardLayout()); // container panel setup with cardLayout
+        containerPanel.add(loginPanel, "LOGIN_PANEL");
+        // TODO: add home panel
 
-
-
-
+        CardLayout cl = (CardLayout) containerPanel.getLayout();
+        cl.show(containerPanel, "LOGIN_PANEL");
 
 
         // add components to MainFrame
         add(titlePanel, BorderLayout.NORTH); // add title panel to NORTH position
+        add(containerPanel, BorderLayout.CENTER); // add container panel to CENTER position
 
 
     }
