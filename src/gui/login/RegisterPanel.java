@@ -5,6 +5,9 @@ import customComponents.CustomButton;
 import customComponents.CustomLabel;
 import customComponents.CustomPanel;
 import customComponents.PlaceholderTextField;
+import model.CardPayment;
+import model.Customer;
+import model.Payment;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -14,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 public class RegisterPanel extends JPanel{
 
@@ -106,6 +110,39 @@ public class RegisterPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 styling();
+            }
+        });
+
+
+        // create account event listener
+        createAccountButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!fieldsEmpty()) { // if textFields are not empty and do not still equal the placeholders
+                    String details;
+                    // in case details field is left empty, however since there is a placeHolder text -- "Other Details" , it needs to check in order to send the proper info
+                    if (detailsField.getText().equals(" Other Info")) {
+                        details = ""; // if detailsField still = Other Details
+                    } else details = detailsField.getText();
+
+                    Customer newCustomer = new Customer(phoneNumberField.getText(), firstNameField.getText(),
+                            lastNameField.getText(), addressField.getText(), details);
+
+                    if (addPaymentBox.isSelected()) { // add payment details if paymentBox is selected
+                        Payment newPayment = new CardPayment(phoneNumberField.getText(), cardNameField.getText(), cardNumberField.getText(),
+                                cardExpDateField.getText(), CVCField.getText());
+                        newCustomer.addPayment(newPayment);
+                    }
+
+                    try {
+                        clearFields();
+                        RegisterPanel.this.createAccountListener.createAccount(newCustomer); // call create account event
+                    } catch (IOException | BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(RegisterPanel.this, "Info fields can not be left empty", "Empty Fields", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -218,8 +255,6 @@ public class RegisterPanel extends JPanel{
             }
         });
 
-
-        
     }
 
     private void styling() {

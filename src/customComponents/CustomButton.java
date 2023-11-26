@@ -11,6 +11,10 @@ public class CustomButton extends JButton {
     private MouseAdapter customMouseListener;
 
 
+    public CustomButton(String text) {
+        super(text);
+    }
+
     public CustomButton(String text, Font font, Color textColor, Color backgroundColor, Color hoverColor, Border borderType) {
         super(text);
 

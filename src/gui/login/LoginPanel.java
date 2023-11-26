@@ -2,9 +2,12 @@ package gui.login;
 
 
 import customComponents.CustomPanel;
+import gui.ContainerPanel;
+import model.Customer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class LoginPanel extends CustomPanel {
 
@@ -12,6 +15,10 @@ public class LoginPanel extends CustomPanel {
     private final RegisterPanel registerPanel;
     private final SignInPanel signInPanel;
     private final JPanel containerPanel;
+
+    // EVENT LISTENERS
+
+    private LoginListener loginListener;
 
     public LoginPanel() {
         setLayout(new BorderLayout());
@@ -44,12 +51,24 @@ public class LoginPanel extends CustomPanel {
         // REGISTER
         registerPanel.setCreateAccountListener(new CreateAccountListener() { // set the listener for the cancel button in the register panel
             @Override
+            public void createAccount(Customer newCustomer) {
+                LoginPanel.this.loginListener.accountCreatedEvent(newCustomer);
+                cl.show(containerPanel, "SIGN_IN_PANEL"); // on acct creation show login panel
+            }
+
+            @Override
             public void cancelEvent() {
                 cl.show(containerPanel, "SIGN_IN_PANEL"); // on click show the sign in panel
             }
         });
 
-
     }
 
+    public void setLoginListener(LoginListener listener) {
+        this.loginListener = listener;
+    }
+
+    public JPanel getContainerPanel() {
+        return containerPanel;
+    }
 }

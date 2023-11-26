@@ -35,6 +35,7 @@ public class SignInPanel extends CustomPanel {
 
         submitButton = new CustomButton("LOGIN", Config.getTextFont(20), Config.getTextColor(), Config.getButtonBackgroundColor(),
                 Config.getButtonHoverColor(), Config.getButtonBorder()); // submit button
+//        submitButton = new CustomButton("LOGIN");
 
         newCustomerButton = new JButton("NEW CUSTOMER?"); // new customer button
 
@@ -84,15 +85,15 @@ public class SignInPanel extends CustomPanel {
 
 
 
-        // mouse listener for hover effects
-        newCustomerButton.addMouseListener(new MouseAdapter() {
+
+        newCustomerButton.addMouseListener(new MouseAdapter() { // hover effects for the new customer? button
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(MouseEvent e) { // on mouse entered set foreground to textColor
                 newCustomerButton.setForeground(Config.getTextColor());
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseExited(MouseEvent e) { // on exit set foreground to white
                 super.mouseExited(e);
                 newCustomerButton.setForeground(Color.WHITE);
             }
