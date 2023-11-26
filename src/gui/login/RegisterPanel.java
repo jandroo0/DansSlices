@@ -101,6 +101,14 @@ public class RegisterPanel extends JPanel{
 
     private void handleEvents() {
 
+        // add payment box on select show payment field
+        addPaymentBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                styling();
+            }
+        });
+
 
         // cancel button event
         cancelButton.addActionListener(new ActionListener() {
@@ -112,7 +120,6 @@ public class RegisterPanel extends JPanel{
                     throw new RuntimeException(ex);
                 }
                 RegisterPanel.this.createAccountListener.cancelEvent();
-
             }
         });
     }
@@ -209,9 +216,10 @@ public class RegisterPanel extends JPanel{
                     addPaymentBox.setForeground(Config.getTextColor());
                 }
             }
-
-
         });
+
+
+        
     }
 
     private void styling() {
