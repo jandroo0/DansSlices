@@ -6,5 +6,13 @@
     "Last_Name": "asdad",
     "Phone_Number": "1234567890",
     "Password": "12345"
+  },
+  {
+    "First_Name": "Alejandro",
+    "Details": "",
+    "Address": "asdad",
+    "Last_Name": "Garcia",
+    "Phone_Number": "0987654321",
+    "Password": "09876"
   }
 ]

@@ -4,12 +4,11 @@ package gui.login;
 
 import model.Customer;
 
-import java.io.IOException;
 import java.util.EventListener;
 
 public interface CreateAccountListener extends EventListener {
 
-    void createAccount(Customer newCustomer) throws IOException;
+    void createAccount(Customer newCustomer);
 
     void cancelEvent();
 }
