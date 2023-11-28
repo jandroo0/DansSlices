@@ -4,10 +4,8 @@ import config.Config;
 import controller.Controller;
 import gui.login.LoginListener;
 import gui.login.LoginPanel;
-import gui.login.RegisterPanel;
 import model.Customer;
 
-import javax.security.auth.login.LoginException;
 import javax.swing.*;
 import java.awt.*;
 
@@ -41,14 +39,15 @@ public class MainFrame extends JFrame {
         // title panel
         titlePanel = new TitlePanel();
 
+        // login panel(contains sign in and register panels)
         loginPanel = new LoginPanel();
 
-        containerPanel = new JPanel(new CardLayout()); // container panel setup with cardLayout
-        containerPanel.add(loginPanel, "LOGIN_PANEL");
+        containerPanel = new JPanel(new CardLayout()); // main container panel setup with cardLayout
+        containerPanel.add(loginPanel, "LOGIN_PANEL"); // add login panel to the main container panel
         // TODO: add home panel
 
-        CardLayout cl = (CardLayout) containerPanel.getLayout();
-        cl.show(containerPanel, "LOGIN_PANEL");
+        CardLayout cl = (CardLayout) containerPanel.getLayout(); // get cardLayout from main container panel
+        cl.show(containerPanel, "LOGIN_PANEL"); // show login panel on default
 
 
         // add components to MainFrame
@@ -61,29 +60,25 @@ public class MainFrame extends JFrame {
     }
 
     private void handleEventListeners() {
-        loginPanel.setLoginListener(new LoginListener() {
+        loginPanel.setLoginListener(new LoginListener() { // login panel listener
             @Override
             public void accountCreatedEvent(Customer newCustomer) {
-                if(!MainFrame.this.controller.existingCustomer(newCustomer.getPhoneNumber())) { // if there is no existing customer with the same phone number
-                    try {
-                        MainFrame.this.controller.addCustomer(newCustomer); // add customer to customers list
+                if (!MainFrame.this.controller.existingCustomer(newCustomer.getPhoneNumber())) { // if there is no existing customer with the same phone number
+
+                    MainFrame.this.controller.addCustomer(newCustomer); // add customer to customers list
 //                        MainFrame.this.controller.saveCustomers(); // save new list to -> stored customers list
 
-                        if(!newCustomer.getPayments().isEmpty()) {
-                            MainFrame.this.controller.savePayments();
-                            System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName() + " PAYMENT METHOD SAVED: " + newCustomer.getPayments().getFirst());
-                        } else {
-                            System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName());
-                        }
-
-                        JOptionPane.showMessageDialog(MainFrame.this, "Account Registered!", "New Account Registered", JOptionPane.ERROR_MESSAGE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                        //TODO: PROMPT
+                    if (!newCustomer.getPayments().isEmpty()) {
+                        MainFrame.this.controller.savePayments();
+                        System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName() + " PAYMENT METHOD SAVED: " + newCustomer.getPayments().getFirst());
+                    } else {
+                        System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName());
                     }
+
+                    JOptionPane.showMessageDialog(MainFrame.this, "Account Registered!", "New Account Registered", JOptionPane.ERROR_MESSAGE);
+
                 } else {
-                    JOptionPane.showMessageDialog(MainFrame.this,  "\"" + newCustomer.getPhoneNumber() + "\" is already in use.","Phone # in use", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(MainFrame.this, "\"" + newCustomer.getPhoneNumber() + "\" is already in use.", "Phone # in use", JOptionPane.ERROR_MESSAGE);
 
                     CardLayout cl = (CardLayout) loginPanel.getContainerPanel().getLayout();
                     cl.show(loginPanel.getContainerPanel(), "SIGN_IN_PANEL");
@@ -93,9 +88,23 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void loginEvent() {
+            public void loginEvent(String phoneNumber, String password) {
+                if (MainFrame.this.controller.customerLogin(phoneNumber, password) != null) { // if the returned customer is not null
+                    Customer customer = MainFrame.this.controller.customerLogin(phoneNumber, password); // set customer to logged in customer
 
+
+//                    CardLayout cl = (CardLayout) containerPanel.getLayout();
+//                    cl.show(containerPanel, "HOME_PANEL"); // switch to the homePanels
+
+//                    homePanel.setCustomer(customer); // set the current customer
+                    System.out.println("CUSTOMER : " + customer.getID() + " : " + customer.getFirstName() + " | LOGGED IN"); // print log in messsage
+
+                } else {
+                    JOptionPane.showMessageDialog(MainFrame.this, "No account linked to phone number / Password is incorrect",
+                            "Account not found", JOptionPane.ERROR_MESSAGE); // if account not found show error message
+                }
             }
+
         });
     }
 }

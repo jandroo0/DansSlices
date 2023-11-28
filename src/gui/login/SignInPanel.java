@@ -1,13 +1,11 @@
 package gui.login;
 
 import config.Config;
-import customComponents.CustomButton;
-import customComponents.CustomLabel;
-import customComponents.CustomPanel;
-import customComponents.PlaceholderTextField;
+import customComponents.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,20 +16,24 @@ import java.awt.event.MouseEvent;
 public class SignInPanel extends CustomPanel {
 
     // COMPONENTS
-    private final CustomLabel idLabel; // id label
-    private final PlaceholderTextField idField; // id text field
+    private final CustomLabel phoneNumberLabel; // phoneNumber label
+    private final CustomLabel passwordLabel; // password label
+    private final CustomPlaceholderField phoneNumberField; // phoneNumber text field
+    private final CustomPasswordField passwordField; // password text field
     private final JButton newCustomerButton; // new customer button
     private final CustomButton submitButton; // form submit button
 
     // EVENT LISTENERS
-//    private LoginListener loginListener; // event listener on login event
-    private NewCustomerListener newCustomerListener; // event listener new customer click event
+//    private SignInListener signInListener; // event listener on login event
+    private SignInListener signInListener; // event listener new customer click event
 
     public SignInPanel() {
 
-        idLabel = new CustomLabel("PHONE NUMBER", 24); // set text for idLabel
+        phoneNumberLabel = new CustomLabel("PHONE NUMBER", 24); // set text for phoneNumberLabel
+        passwordLabel = new CustomLabel("PASSWORD", 24); // set text for passwordlabel
 
-        idField = new PlaceholderTextField(140, 44, 24); // idField
+        phoneNumberField = new CustomPlaceholderField(140, 44, 24); // phoneNumberField
+        passwordField = new CustomPasswordField(140, 44, 24); // passwordField
 
         submitButton = new CustomButton("LOGIN", Config.getTextFont(20), Config.getTextColor(), Config.getButtonBackgroundColor(),
                 Config.getButtonHoverColor(), Config.getButtonBorder()); // submit button
@@ -45,8 +47,8 @@ public class SignInPanel extends CustomPanel {
 
     }
 
-    public void setNewCustomerListener(NewCustomerListener listener) {
-        this.newCustomerListener = listener;
+    public void setSignInListener(SignInListener listener) {
+        this.signInListener = listener;
     }
 
 
@@ -54,17 +56,35 @@ public class SignInPanel extends CustomPanel {
     private void handleEvents() {
 
 
+        // submit button actionListener
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (passwordField != null) { // if something is in the textfield
+                    if (signInListener != null) { // if there is a signInListener
+                        SignInPanel.this.signInListener.signInEvent(phoneNumberField.getText(), passwordField.getText()); // call signIn event with phone number & password
 
+                        try {
+                            phoneNumberField.getDocument().remove(0, phoneNumberField.getText().length()); // clear phoneNumberField doc after submit
+                            passwordField.getDocument().remove(0, passwordField.getText().length()); // clear passwordField doc after submit
+                        } catch (BadLocationException ex) {
+                            throw new RuntimeException(ex);
+                        }
+
+                    }
+                }
+
+            }
+        });
 
 
         // new customer actionListener
         newCustomerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SignInPanel.this.newCustomerListener.newCustomerEvent();
+                SignInPanel.this.signInListener.newCustomerEvent();
             }
         });
-
 
 
     }
@@ -73,17 +93,14 @@ public class SignInPanel extends CustomPanel {
     void styling() {
 
         // idField
-        PlainDocument doc = (PlainDocument) idField.getDocument();
-        doc.setDocumentFilter(new PlaceholderTextField.MyIntFilter(10));
+        PlainDocument doc = (PlainDocument) phoneNumberField.getDocument();
+        doc.setDocumentFilter(new CustomPlaceholderField.MyIntFilter(10));
 
         // "newCustomer ?" button
         newCustomerButton.setFont(Config.getTextFont(14));
         newCustomerButton.setBackground(Config.getBackgroundColor());
         newCustomerButton.setForeground(Color.WHITE);
         newCustomerButton.setBorder(Config.getButtonBorder());
-
-
-
 
 
         newCustomerButton.addMouseListener(new MouseAdapter() { // hover effects for the new customer? button
@@ -110,16 +127,20 @@ public class SignInPanel extends CustomPanel {
         gc.insets = new Insets(0, 0, 10, 0);
         gc.gridy = 0;
         gc.gridx = 0;
-        add(idLabel, gc);
+        add(phoneNumberLabel, gc);
         gc.gridy++;
-        add(idField, gc);
+        add(phoneNumberField, gc);
+        gc.gridy++;
+        add(passwordLabel, gc);
+        gc.gridy++;
+        add(passwordField, gc);
         gc.gridy++;
         add(submitButton, gc);
         gc.gridy++;
         add(newCustomerButton, gc);
     }
 
-    public PlaceholderTextField getIdField() {
-        return idField;
+    public CustomPlaceholderField getPhoneNumberField() {
+        return phoneNumberField;
     }
 }

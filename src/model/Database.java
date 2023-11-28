@@ -1,15 +1,12 @@
 package model;
 
-import gui.login.LoginEvent;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.LinkedList;
 
 public class Database {
@@ -34,13 +31,14 @@ public class Database {
 
     // CUSTOMERS //////////////////////////////////
 
+
     // add customer
-    public void addCustomer(Customer customer) throws IOException {
+    public void addCustomer(Customer customer) {
         this.customers.add(customer);
         saveCustomers();
     }
 
-    // check if given phoneNumber is already in use
+    // check if given phoneNumber exists
     public boolean existingCustomer(String phoneNumber) {
         for (Customer customer : customers) {
             if (customer.getID().equals(phoneNumber)) return true;
@@ -48,11 +46,11 @@ public class Database {
         return false;
     }
 
-    //  checks if customer login id matches any id in customer list and returns customer or null
-    public Customer customerLogin(LoginEvent event) throws ParseException, IOException {
+    //  checks if customer login matches customer in list and returns customer or null
+    public Customer customerLogin(String phoneNumber, String password) {
         loadCustomers(); // refresh list
         for (Customer customer : customers) {
-            if (event.getID().equals(customer.getID())) {
+            if (phoneNumber.equals(customer.getID()) && password.equals(customer.getPassword())) {
                 return customer;
             }
         }
@@ -60,28 +58,29 @@ public class Database {
     }
 
     //save customers
-    public void saveCustomers() throws IOException {
-
-        fileWriter = new FileWriter(customersFilePath);
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-
-        // for each employee create json object and write to file
-        for (Customer customer : customers) {
-            JSONObject jsonObject = new JSONObject();
-
-            jsonObject.put("Phone_Number", customer.getPhoneNumber());
-            jsonObject.put("First_Name", customer.getFirstName());
-            jsonObject.put("Last_Name", customer.getLastName());
-            jsonObject.put("Address", customer.getAddress());
-            jsonObject.put("Details", customer.getDetails());
-
-
-            sb.append(jsonObject.toJSONString() + ',');
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append("]");
+    public void saveCustomers() {
         try {
+            fileWriter = new FileWriter(customersFilePath);
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+
+            // for each employee create json object and write to file
+            for (Customer customer : customers) {
+                JSONObject jsonObject = new JSONObject();
+
+                jsonObject.put("Phone_Number", customer.getPhoneNumber());
+                jsonObject.put("Password", customer.getPassword());
+                jsonObject.put("First_Name", customer.getFirstName());
+                jsonObject.put("Last_Name", customer.getLastName());
+                jsonObject.put("Address", customer.getAddress());
+                jsonObject.put("Details", customer.getDetails());
+
+
+                sb.append(jsonObject.toJSONString() + ',');
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append("]");
+
             fileWriter.write(sb.toString());
             System.out.println("CUSTOMER JSON CREATED AND SAVED");
             fileWriter.close();
@@ -91,14 +90,14 @@ public class Database {
     }
 
     // load customers
-    public void loadCustomers() throws ParseException, IOException {
+    public void loadCustomers() {
         customers.clear(); // clear current list of customers
 
         // LOAD CUSTOMERS---------------------------------------------
-        JSONParser parser = new JSONParser(); //create JSON parser
-        JSONArray customersJSON = (JSONArray) parser.parse(new FileReader(customersFilePath)); // create JSONarray from file
-
         try {
+            JSONParser parser = new JSONParser(); //create JSON parser
+            JSONArray customersJSON = (JSONArray) parser.parse(new FileReader(customersFilePath)); // create JSONarray from file
+
             System.out.println("LOADING CUSTOMERS --------------");
             for (Object customerJSON : customersJSON) { // for each employee JSON in employees file
 
@@ -107,6 +106,7 @@ public class Database {
                 // gather values
 
                 String phoneNumber = (String) customer.get("Phone_Number");
+                String password = (String) customer.get("Password");
                 String firstName = (String) customer.get("First_Name");
                 String lastName = (String) customer.get("Last_Name");
                 String address = (String) customer.get("Address");
@@ -115,7 +115,7 @@ public class Database {
 
                 // add new employee to current employees list
 
-                Customer newCustomer = new Customer(phoneNumber, firstName, lastName, address, details);
+                Customer newCustomer = new Customer(phoneNumber, password, firstName, lastName, address, details);
                 customers.add(newCustomer); // add each customer to list
 
                 //log message
@@ -132,51 +132,56 @@ public class Database {
     // PAYMENTS //////////////////////////////////
 
     // save payments to file
-    public void savePayments() throws IOException {
-        fileWriter = new FileWriter(paymentsFilePath);
+    public void savePayments() {
+        try {
+            fileWriter = new FileWriter(paymentsFilePath);
 
-        JSONObject categoriesJSON = new JSONObject();
+            JSONObject categoriesJSON = new JSONObject();
 
-        // Group payments by category (payment ID)
-        for (Customer customer : customers) {
-            for (int i = 0; i < customer.getPayments().size(); i++) {
-                Payment payment = customer.getPayments().get(i);
+            // Group payments by category (payment ID)
+            for (Customer customer : customers) {
+                for (int i = 0; i < customer.getPayments().size(); i++) {
+                    Payment payment = customer.getPayments().get(i);
 
-                JSONObject paymentJSONObject = new JSONObject();
-                paymentJSONObject.put("ID", payment.getID());
-                paymentJSONObject.put("Card_Name", ((CardPayment) payment).getCardName());
-                paymentJSONObject.put("Card_Number", ((CardPayment) payment).getCardNumber());
-                paymentJSONObject.put("Exp_Date", ((CardPayment) payment).getExpDate());
-                paymentJSONObject.put("CVC", ((CardPayment) payment).getCVC());
+                    JSONObject paymentJSONObject = new JSONObject();
+                    paymentJSONObject.put("ID", payment.getID());
+                    paymentJSONObject.put("Card_Name", ((CardPayment) payment).getCardName());
+                    paymentJSONObject.put("Card_Number", ((CardPayment) payment).getCardNumber());
+                    paymentJSONObject.put("Exp_Date", ((CardPayment) payment).getExpDate());
+                    paymentJSONObject.put("CVC", ((CardPayment) payment).getCVC());
 
-                String category = customer.getID(); // Use customer ID as the category (payment ID)
+                    String category = customer.getID(); // Use customer ID as the category (payment ID)
 
-                JSONArray categoryArray = (categoriesJSON.containsKey(category))
-                        ? (JSONArray) categoriesJSON.get(category)
-                        : new JSONArray();
-                categoryArray.add(paymentJSONObject);
-                categoriesJSON.put(category, categoryArray);
+                    JSONArray categoryArray = (categoriesJSON.containsKey(category))
+                            ? (JSONArray) categoriesJSON.get(category)
+                            : new JSONArray();
+                    categoryArray.add(paymentJSONObject);
+                    categoriesJSON.put(category, categoryArray);
+                }
             }
+
+            // Write categories JSON to file
+            fileWriter.write(categoriesJSON.toJSONString());
+            System.out.println("PAYMENT JSON CREATED AND SAVED");
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        // Write categories JSON to file
-        fileWriter.write(categoriesJSON.toJSONString());
-        System.out.println("PAYMENT JSON CREATED AND SAVED");
-        fileWriter.close();
     }
 
     //  load payment
-    public void loadPayments() throws ParseException, IOException {
+    public void loadPayments() {
         // Clear all listed payments
         for (Customer customer : customers) {
             customer.getPayments().clear();
         }
-
-        // LOAD PAYMENTS---------------------------------------------
-        JSONParser parser = new JSONParser(); // Create JSON parser
-        JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(paymentsFilePath)); // Create JSON object from file
-
         try {
+            // LOAD PAYMENTS---------------------------------------------
+            JSONParser parser = new JSONParser(); // Create JSON parser
+            JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(paymentsFilePath)); // Create JSON object from file
+
+
             System.out.println("LOADING PAYMENTS --------------");
 
             for (Object categoryKey : categoriesJSON.keySet()) { // For each category (customer ID)

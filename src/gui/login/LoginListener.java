@@ -7,5 +7,6 @@ import java.util.EventListener;
 public interface LoginListener extends EventListener {
 
     public void accountCreatedEvent(Customer customer);
-    public void loginEvent();
+
+    public void loginEvent(String phoneNumber, String password);
 }

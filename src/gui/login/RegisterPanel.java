@@ -1,16 +1,12 @@
 package gui.login;
 
 import config.Config;
-import customComponents.CustomButton;
-import customComponents.CustomLabel;
-import customComponents.CustomPanel;
-import customComponents.PlaceholderTextField;
+import customComponents.*;
 import model.CardPayment;
 import model.Customer;
 import model.Payment;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,35 +15,31 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
-public class RegisterPanel extends JPanel{
+public class RegisterPanel extends JPanel {
 
     // PANELS
     private final CustomPanel titlePanel;
     private final CustomPanel infoPanels; // info panel container
     private final CustomPanel userInfoPanel; // customer info panel
-    private CustomPanel paymentInfoPanel; // payment info panel
     private final CustomPanel buttonPanel; // button panel
-
     private final CustomLabel titleLabel; // title label
+    // USER INFO
+    private final CustomPlaceholderField firstNameField;
 
     // INFO FIELDS
-
-    // USER INFO
-    private final PlaceholderTextField firstNameField;
-    private final PlaceholderTextField lastNameField;
-    private final PlaceholderTextField phoneNumberField;
-    private final PlaceholderTextField addressField;
-    private final PlaceholderTextField detailsField;
-
+    private final CustomPlaceholderField lastNameField;
+    private final CustomPlaceholderField phoneNumberField;
+    private final CustomPasswordField passwordField;
+    private final CustomPlaceholderField addressField;
+    private final CustomPlaceholderField detailsField;
     // PAYMENT INFO
-    private final PlaceholderTextField cardNameField;
-    private final PlaceholderTextField cardNumberField;
-    private final PlaceholderTextField cardExpDateField;
-    private final PlaceholderTextField CVCField;
-
+    private final CustomPlaceholderField cardNameField;
+    private final CustomPlaceholderField cardNumberField;
+    private final CustomPlaceholderField cardExpDateField;
+    private final CustomPlaceholderField CVCField;
     private final CustomButton createAccountButton; // create account  button
     private final CustomButton cancelButton; // cancel button
-
+    private CustomPanel paymentInfoPanel; // payment info panel
     private JCheckBox addPaymentBox;// "add payment ?" checkBox
 
 
@@ -69,17 +61,18 @@ public class RegisterPanel extends JPanel{
 
 
         //user info fields
-        firstNameField = new PlaceholderTextField(" First", 140, 30, 20);
-        lastNameField = new PlaceholderTextField(" Last", 140, 30, 20);
-        phoneNumberField = new PlaceholderTextField(" Phone", 140, 30, 20, true, 10);
-        addressField = new PlaceholderTextField(" Address", 140, 30, 20);
-        detailsField = new PlaceholderTextField(" Other", 140, 30, 20, 30);
+        firstNameField = new CustomPlaceholderField(" First", 140, 30, 20);
+        lastNameField = new CustomPlaceholderField(" Last", 140, 30, 20);
+        phoneNumberField = new CustomPlaceholderField(" Phone", 140, 30, 20, true, 10);
+        passwordField = new CustomPasswordField(" Password", 140, 30, 20);
+        addressField = new CustomPlaceholderField(" Address", 140, 30, 20);
+        detailsField = new CustomPlaceholderField(" Other", 140, 30, 20, 30);
 
         //payment info fields
-        cardNameField = new PlaceholderTextField(" Name on Card ", 140, 30, 18);
-        cardNumberField = new PlaceholderTextField(" Number", 140, 30, 18, true, 20);
-        cardExpDateField = new PlaceholderTextField("MM/YY", 140, 30, 18);
-        CVCField = new PlaceholderTextField(" CVC", 140, 30, 18, true, 3);
+        cardNameField = new CustomPlaceholderField(" Name on Card ", 140, 30, 18);
+        cardNumberField = new CustomPlaceholderField(" Number", 140, 30, 18, true, 20);
+        cardExpDateField = new CustomPlaceholderField("MM/YY", 140, 30, 18);
+        CVCField = new CustomPlaceholderField(" CVC", 140, 30, 18, true, 3);
 
 
         addPaymentBox = new JCheckBox("Add Payment"); // add payment check box
@@ -125,7 +118,7 @@ public class RegisterPanel extends JPanel{
                         details = ""; // if detailsField still = Other Details
                     } else details = detailsField.getText();
 
-                    Customer newCustomer = new Customer(phoneNumberField.getText(), firstNameField.getText(),
+                    Customer newCustomer = new Customer(phoneNumberField.getText(), passwordField.getText(), firstNameField.getText(),
                             lastNameField.getText(), addressField.getText(), details);
 
                     if (addPaymentBox.isSelected()) { // add payment details if paymentBox is selected
@@ -160,8 +153,6 @@ public class RegisterPanel extends JPanel{
             }
         });
     }
-
-
 
 
     public void setCreateAccountListener(CreateAccountListener listener) {
@@ -201,6 +192,8 @@ public class RegisterPanel extends JPanel{
         userInfoPanel.add(lastNameField, gc);
         gc.gridy++;
         userInfoPanel.add(phoneNumberField, gc);
+        gc.gridy++;
+        userInfoPanel.add(passwordField, gc);
         gc.gridy++;
         userInfoPanel.add(addressField, gc);
         gc.gridy++;
@@ -301,6 +294,7 @@ public class RegisterPanel extends JPanel{
         firstNameField.setText("");
         lastNameField.setText("");
         phoneNumberField.getDocument().remove(0, phoneNumberField.getText().length());
+        passwordField.getDocument().remove(0, passwordField.getText().length());
         addressField.setText("");
         detailsField.setText("");
 
@@ -319,4 +313,4 @@ public class RegisterPanel extends JPanel{
 
     }
 
-    }
+}

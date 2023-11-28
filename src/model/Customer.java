@@ -5,13 +5,15 @@ import java.util.LinkedList;
 public class Customer {
 
     private String ID, phoneNumber, firstName, lastName, address, details;
+    private String password;
 
     private LinkedList<Payment> payments;
     private LinkedList<Order> orders;
 
-    public Customer(String phoneNumber, String firstName, String lastName, String address, String details) {
+    public Customer(String phoneNumber, String password, String firstName, String lastName, String address, String details) {
         this.ID = phoneNumber;
         this.phoneNumber = phoneNumber;
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -44,6 +46,18 @@ public class Customer {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setOrders(LinkedList<Order> orders) {
+        this.orders = orders;
     }
 
     public String getID() {
@@ -85,6 +99,6 @@ public class Customer {
     public void setDetails(String details) {
         this.details = details;
     }
-    
+
 
 }

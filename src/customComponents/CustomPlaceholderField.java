@@ -8,14 +8,14 @@ import java.awt.*;
 
 @SuppressWarnings("serial")
 
-public class PlaceholderTextField extends JTextField {
+public class CustomPlaceholderField extends JTextField {
 
     private String placeholder;
     private int fontSize;
 
 
     // textField with set width, height, and fontSize ---- DEFAULT
-    public PlaceholderTextField(int width, int height, int fontSize) {
+    public CustomPlaceholderField(int width, int height, int fontSize) {
 
         setPreferredSize(new Dimension(width, height));
         setBorder(BorderFactory.createLineBorder(Config.getTextColor()));
@@ -31,21 +31,21 @@ public class PlaceholderTextField extends JTextField {
     }
 
     // placeholder
-    public PlaceholderTextField(final String pText, int width, int height, int fontSize) {
+    public CustomPlaceholderField(final String pText, int width, int height, int fontSize) {
         this(width, height, fontSize);
 
         this.placeholder = pText;
     }
 
     // text limit
-    public PlaceholderTextField(int width, int height, int fontSize, int limit) {
+    public CustomPlaceholderField(int width, int height, int fontSize, int limit) {
         this(width, height, fontSize);
         setDocument(new JTextFieldLimit(limit));
 
     }
 
     // placeholder and limit
-    public PlaceholderTextField(final String pText, int width, int height, int fontSize, int limit) {
+    public CustomPlaceholderField(final String pText, int width, int height, int fontSize, int limit) {
         this(width, height, fontSize);
         setDocument(new JTextFieldLimit(limit));
 
@@ -53,7 +53,7 @@ public class PlaceholderTextField extends JTextField {
     }
 
     //    int filter and limit
-    public PlaceholderTextField(int width, int height, int fontSize, boolean intFilter, int limit) {
+    public CustomPlaceholderField(int width, int height, int fontSize, boolean intFilter, int limit) {
         this(width, height, fontSize);
         if (intFilter) {
             PlainDocument doc = (PlainDocument) getDocument();
@@ -63,12 +63,21 @@ public class PlaceholderTextField extends JTextField {
     }
 
     // placeholder, int filter, and limit
-    public PlaceholderTextField(final String pText, int width, int height, int fontSize, boolean intFilter, int limit) {
+    public CustomPlaceholderField(final String pText, int width, int height, int fontSize, boolean intFilter, int limit) {
         this(width, height, fontSize);
         if (intFilter) {
             PlainDocument doc = (PlainDocument) getDocument();
             doc.setDocumentFilter(new MyIntFilter(limit));
         }
+
+        this.placeholder = pText;
+
+    }
+
+    // placeholder, limit, and echoChar
+    public CustomPlaceholderField(final String pText, int width, int height, int fontSize, int limit, char echoChar) {
+        this(width, height, fontSize);
+        setDocument(new JTextFieldLimit(limit));
 
         this.placeholder = pText;
 

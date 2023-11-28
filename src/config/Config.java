@@ -8,8 +8,8 @@ public class Config {
 
     // CONFIGURATION //
 
-    private static final int WIDTH = 720; // main frame width
-    private static final int HEIGHT = 880; // main frame height
+    private static final int WIDTH = 600; // main frame width
+    private static final int HEIGHT = 800; // main frame height
 
 
     // COLORS //
@@ -42,6 +42,7 @@ public class Config {
     public static int getWIDTH() {
         return WIDTH;
     }
+
     // get frame height
     public static int getHEIGHT() {
         return HEIGHT;
@@ -66,10 +67,12 @@ public class Config {
     public static Color getTextFieldColor() { // text field color
         return textFieldColor;
     }
+
     // BUTTON
     public static Color getButtonBackgroundColor() { // text field color
         return buttonBackgroundColor;
     }
+
     public static Color getButtonHoverColor() { // text field color
         return buttonHoverColor;
     }
@@ -77,9 +80,6 @@ public class Config {
     public static Border getButtonBorder() { // button border
         return buttonBorder;
     }
-
-
-
 
 
     // FONT //
@@ -93,9 +93,6 @@ public class Config {
     public static Font getTextFont(int size) {
         return new Font(textFont.getFontName(), textFont.getStyle(), size);
     }
-
-
-
 
 
 }

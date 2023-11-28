@@ -2,12 +2,10 @@ package gui.login;
 
 
 import customComponents.CustomPanel;
-import gui.ContainerPanel;
 import model.Customer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class LoginPanel extends CustomPanel {
 
@@ -37,11 +35,15 @@ public class LoginPanel extends CustomPanel {
         add(containerPanel, BorderLayout.CENTER);
 
 
-
         // EVENTS //
 
         // SIGN IN
-        signInPanel.setNewCustomerListener(new NewCustomerListener() { // set the listener for the new customer? button in the sign in panel
+        signInPanel.setSignInListener(new SignInListener() { // set the listener for the new customer? button in the sign in panel
+            @Override
+            public void signInEvent(String phoneNumber, String password) {
+                LoginPanel.this.loginListener.loginEvent(phoneNumber, password);
+            }
+
             @Override
             public void newCustomerEvent() {
                 cl.show(containerPanel, "REGISTER_PANEL"); // on click show the register panel

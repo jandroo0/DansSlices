@@ -1,11 +1,7 @@
 package controller;
 
-import gui.login.LoginEvent;
 import model.Customer;
 import model.Database;
-import org.json.simple.parser.ParseException;
-
-import java.io.IOException;
 
 public class Controller {
     Database db = new Database();
@@ -19,7 +15,8 @@ public class Controller {
     public void load() {
         try {
             this.db.loadCustomers();
-        } catch(Exception e) {
+            this.db.loadPayments();
+        } catch (Exception e) {
             System.out.println("ERROR LOADING CUSTOMERS");
         }
 
@@ -27,16 +24,16 @@ public class Controller {
 
     // CUSTOMER
 
-    public void addCustomer(Customer c) throws IOException {
+    public void addCustomer(Customer c) {
         this.db.addCustomer(c);
     }
 
-    public void saveCustomers() throws IOException {
+    public void saveCustomers() {
         this.db.saveCustomers();
     }
 
-    public Customer customerLogin(LoginEvent e) throws ParseException, IOException {
-        return this.db.customerLogin(e);
+    public Customer customerLogin(String phoneNumber, String password) {
+        return this.db.customerLogin(phoneNumber, password);
     }
 
     public boolean existingCustomer(String phoneNumber) {
@@ -46,11 +43,11 @@ public class Controller {
 
     // PAYMENTS
 
-    public void savePayments() throws IOException {
+    public void savePayments() {
         this.db.savePayments();
     }
 
-    public void loadPayments() throws IOException, ParseException {
+    public void loadPayments() {
         this.db.loadPayments();
     }
 
