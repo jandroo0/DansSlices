@@ -13,11 +13,14 @@ public class Database {
     // FILE PATHS
     private final String customersFilePath = "customers.json";
     private final String paymentsFilePath = "payments.json";
+    private final String menuFilePath = "menu.json";
 
 
     // LISTS of DATA
     private final LinkedList<Customer> customers; // create list of customer
     private final LinkedList<Payment> payments; // create list of customer
+    private final LinkedList<MenuItem> menu; // create list of menu items
+    private LinkedList<PrebuiltPizza> prebuiltPizzas; // create list of prebuilt pizzas
 
 
     private FileWriter fileWriter;
@@ -26,6 +29,8 @@ public class Database {
 
         customers = new LinkedList<Customer>(); // create list of customers
         payments = new LinkedList<Payment>(); // create list of customers
+        menu = new LinkedList<MenuItem>();
+        prebuiltPizzas = new LinkedList<PrebuiltPizza>(); // create list of prebuilt pizzas
 
     }
 
@@ -213,4 +218,79 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+
+    // MENU //////////////////////////////////////////////////
+    public void loadMenu() {
+        menu.clear(); // Clear the current menu list
+        prebuiltPizzas.clear(); // Clear the current prebuilt pizza list
+
+        try {
+            JSONParser parser = new JSONParser(); // Create JSON parser
+            JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(menuFilePath)); // Create JSON object from file
+
+
+            System.out.println("LOADING MENU --------------");
+
+            for (Object categoryKey : categoriesJSON.keySet()) { // For each category
+                String category = (String) categoryKey;
+                JSONArray categoryArray = (JSONArray) categoriesJSON.get(category);
+
+                for (Object menuItemJSON : categoryArray) { // For each menu item JSON in category
+                    JSONObject menuItemObj = (JSONObject) menuItemJSON; // Create menu item object from JSON
+
+                    String typeID = (String) menuItemObj.get("Type");
+                    String itemName = (String) menuItemObj.get("Item_Name");
+                    float price = Float.parseFloat(menuItemObj.get("Price").toString());
+
+                    if (category.equalsIgnoreCase("prebuilt")) {
+                        PrebuiltPizza prebuiltPizza = loadPrebuiltPizza(menuItemObj);
+                        prebuiltPizzas.add(prebuiltPizza);
+                    } else {
+                        MenuItem menuItem = new MenuItem(typeID, category, itemName, price);
+                        menu.add(menuItem);
+                    }
+
+                    System.out.println("MENU ITEM : " + category + " : " + itemName + " : $" + price);
+                }
+            }
+
+            System.out.println("MENU LOADED --------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private PrebuiltPizza loadPrebuiltPizza(JSONObject menuItemObj) {
+        String typeID = (String) menuItemObj.get("Type");
+        String itemName = (String) menuItemObj.get("Item_Name");
+        float price = Float.parseFloat(menuItemObj.get("Price").toString());
+        String crustType = (String) menuItemObj.get("Crust");
+
+        // Load toppings
+        String toppingsString = (String) menuItemObj.get("Toppings");
+        String[] toppingsArray = toppingsString.split(",");
+
+        LinkedList<Ingredient> toppings = new LinkedList<>();
+        for (String toppingStr : toppingsArray) {
+            String[] toppingParts = toppingStr.split("-");
+            String category = toppingParts[0];
+            String name = toppingParts[1];
+            float toppingPrice = 0.0f; // You may need to adjust this based on your data structure
+            Ingredient topping = new Ingredient(typeID, category, name, toppingPrice);
+            toppings.add(topping);
+        }
+
+        return new PrebuiltPizza(typeID, "PREBUILT", itemName, price, crustType, toppings);
+    }
+
+    public LinkedList<PrebuiltPizza> getPrebuiltPizzas() {
+        return prebuiltPizzas;
+    }
+
+    public LinkedList<MenuItem> getMenu() { // return all menu items
+        return menu;
+    }
+
+
 }

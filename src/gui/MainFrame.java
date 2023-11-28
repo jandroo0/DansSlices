@@ -3,9 +3,11 @@ package gui;
 import config.Config;
 import controller.Controller;
 import gui.home.HomePanel;
+import gui.home.menu.MenuListener;
 import gui.login.LoginListener;
 import gui.login.LoginPanel;
 import model.Customer;
+import model.Order;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,6 +46,7 @@ public class MainFrame extends JFrame {
 
         // home panel
         homePanel = new HomePanel();
+        homePanel.setMenuItems(MainFrame.this.controller.getMenu(), MainFrame.this.controller.getPrebuiltPizzas()); // set the menu items
 
         containerPanel = new JPanel(new CardLayout()); // main container panel setup with cardLayout
         containerPanel.add(loginPanel, "LOGIN_PANEL"); // add login panel to the main container panel
@@ -100,5 +103,15 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+
+        this.homePanel.setMenuListener(new MenuListener() { // handles the employee new order panel events
+            @Override
+            public void newOrderEvent(Order newOrder) {
+//                MainFrame.this.controller.createOrder(newOrder); // add the order to the database
+//                MainFrame.this.controller.saveOrders(); // save the orders to the database
+//                homePanel.setNewOrderMenuItems(MainFrame.this.controller.getMenu(), MainFrame.this.controller.getPrebuiltPizzas()); // set the menu items
+            }
+        });
+
     }
 }
