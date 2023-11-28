@@ -306,10 +306,4 @@ public class RegisterPanel extends JPanel {
         switchPaymentFields();
     }
 
-    // if they dont have an account, then phone number will be preset on acct creation after attempting to login
-    public void setPhoneNumber(String phoneNumber) {
-        phoneNumberField.setText(phoneNumber);
-
-    }
-
 }

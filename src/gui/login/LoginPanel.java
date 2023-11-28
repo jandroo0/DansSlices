@@ -41,7 +41,7 @@ public class LoginPanel extends CustomPanel {
         signInPanel.setSignInListener(new SignInListener() { // set the listener for the new customer? button in the sign in panel
             @Override
             public void signInEvent(String phoneNumber, String password) {
-                LoginPanel.this.loginListener.loginEvent(phoneNumber, password);
+                LoginPanel.this.loginListener.loginEvent(phoneNumber, password); // pass phone number and password to mainframe loginEvent from loginListener
             }
 
             @Override

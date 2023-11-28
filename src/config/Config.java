@@ -29,7 +29,7 @@ public class Config {
     private static final Color buttonHoverColor = new Color(232, 191, 139); // button hover color
     private static final Color buttonBackgroundColor = new Color(251, 251, 212); // button background color
 
-    private static final Border buttonBorder = BorderFactory.createEmptyBorder(6, 9, 6, 9); // default button size
+    private static final Border buttonBorder = BorderFactory.createEmptyBorder(6, 9, 6, 9); // default button border / size
 
     // FONT
 
@@ -84,15 +84,14 @@ public class Config {
 
     // FONT //
 
-    // get default text font
     public static final Font getTextFont() {
         return textFont;
-    }
+    } // get default text font
 
-    // get resized text font
+
     public static Font getTextFont(int size) {
         return new Font(textFont.getFontName(), textFont.getStyle(), size);
-    }
+    }// get resized text font
 
 
 }

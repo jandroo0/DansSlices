@@ -2,6 +2,7 @@ package gui;
 
 import config.Config;
 import controller.Controller;
+import gui.home.HomePanel;
 import gui.login.LoginListener;
 import gui.login.LoginPanel;
 import model.Customer;
@@ -15,14 +16,14 @@ public class MainFrame extends JFrame {
     private TitlePanel titlePanel; // title panel
     private JPanel containerPanel; // main container panel, contains: login panel,
     private LoginPanel loginPanel; // login panel which contains both the sign in and register screens
+    private HomePanel homePanel; // home panel which contains: menuPanel,
 
-
-    // "DATABASE" CONTROLLER
-    private Controller controller;
+    private Controller controller; // "DATABASE" CONTROLLER
 
     public MainFrame() {
-        super("DANS SLICES");
-        controller = new Controller();
+        super("DANS SLICES"); // set window title
+
+        controller = new Controller(); // create controller, loads all data, controls database interaction
 
         // window settings
         setSize(Config.getWIDTH(), Config.getHEIGHT()); // set frame size
@@ -30,7 +31,6 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null); // centers window to screen when opened
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // closes when clicking 'X'
         setVisible(true); // set window visible
-
 
         setLayout(new BorderLayout()); // set window layout to a border layout
 
@@ -42,37 +42,35 @@ public class MainFrame extends JFrame {
         // login panel(contains sign in and register panels)
         loginPanel = new LoginPanel();
 
+        // home panel
+        homePanel = new HomePanel();
+
         containerPanel = new JPanel(new CardLayout()); // main container panel setup with cardLayout
         containerPanel.add(loginPanel, "LOGIN_PANEL"); // add login panel to the main container panel
-        // TODO: add home panel
+        containerPanel.add(homePanel, "HOME_PANEL"); // add home panel to the main container panel
 
         CardLayout cl = (CardLayout) containerPanel.getLayout(); // get cardLayout from main container panel
         cl.show(containerPanel, "LOGIN_PANEL"); // show login panel on default
-
 
         // add components to MainFrame
         add(titlePanel, BorderLayout.NORTH); // add title panel to NORTH position
         add(containerPanel, BorderLayout.CENTER); // add container panel to CENTER position
 
         handleEventListeners();
-
-
     }
 
     private void handleEventListeners() {
         loginPanel.setLoginListener(new LoginListener() { // login panel listener
             @Override
             public void accountCreatedEvent(Customer newCustomer) {
+
                 if (!MainFrame.this.controller.existingCustomer(newCustomer.getPhoneNumber())) { // if there is no existing customer with the same phone number
-
                     MainFrame.this.controller.addCustomer(newCustomer); // add customer to customers list
-//                        MainFrame.this.controller.saveCustomers(); // save new list to -> stored customers list
+                    System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName());
 
-                    if (!newCustomer.getPayments().isEmpty()) {
-                        MainFrame.this.controller.savePayments();
-                        System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName() + " PAYMENT METHOD SAVED: " + newCustomer.getPayments().getFirst());
-                    } else {
-                        System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName());
+                    if (!newCustomer.getPayments().isEmpty()) { // if there are payments
+                        MainFrame.this.controller.savePayments(); // save payments
+                        System.out.println("PAYMENT METHOD SAVED: " + newCustomer.getPayments().getFirst());
                     }
 
                     JOptionPane.showMessageDialog(MainFrame.this, "Account Registered!", "New Account Registered", JOptionPane.ERROR_MESSAGE);
@@ -83,20 +81,17 @@ public class MainFrame extends JFrame {
                     CardLayout cl = (CardLayout) loginPanel.getContainerPanel().getLayout();
                     cl.show(loginPanel.getContainerPanel(), "SIGN_IN_PANEL");
                 }
-
-
             }
 
             @Override
-            public void loginEvent(String phoneNumber, String password) {
+            public void loginEvent(String phoneNumber, String password) { // login event
                 if (MainFrame.this.controller.customerLogin(phoneNumber, password) != null) { // if the returned customer is not null
                     Customer customer = MainFrame.this.controller.customerLogin(phoneNumber, password); // set customer to logged in customer
 
+                    CardLayout cl = (CardLayout) containerPanel.getLayout(); // get the cardLayout from the main container
+                    cl.show(containerPanel, "HOME_PANEL"); // switch to the homePanel containing the menu,
 
-//                    CardLayout cl = (CardLayout) containerPanel.getLayout();
-//                    cl.show(containerPanel, "HOME_PANEL"); // switch to the homePanels
-
-//                    homePanel.setCustomer(customer); // set the current customer
+                    homePanel.setCustomer(customer); // set the current customer
                     System.out.println("CUSTOMER : " + customer.getID() + " : " + customer.getFirstName() + " | LOGGED IN"); // print log in messsage
 
                 } else {
@@ -104,7 +99,6 @@ public class MainFrame extends JFrame {
                             "Account not found", JOptionPane.ERROR_MESSAGE); // if account not found show error message
                 }
             }
-
         });
     }
 }
