@@ -8,6 +8,8 @@ public class Config {
 
     // CONFIGURATION //
 
+    //TEST COMMENT PLS IGNORE
+
     private static final int WIDTH = 600; // main frame width
     private static final int HEIGHT = 800; // main frame height
 
