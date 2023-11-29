@@ -12,6 +12,7 @@ import java.util.LinkedList;
 public class Database {
     // FILE PATHS
     private final String customersFilePath = "customers.json";
+    private final String ordersFilePath = "orders.json";
     private final String paymentsFilePath = "payments.json";
     private final String menuFilePath = "menu.json";
 
@@ -132,6 +133,63 @@ public class Database {
             e.printStackTrace();
         }
 
+    }
+
+    // CUSTOMER ORDERS
+
+    // save orders to file
+    public void saveOrders() {
+
+        try {
+            fileWriter = new FileWriter(ordersFilePath);
+
+            JSONObject categoriesJSON = new JSONObject();
+
+            // Group orders by category (order ID)
+            for (Customer customer : customers) {
+                for (Order order : customer.getOrders()) {
+
+                    JSONObject orderJSONObject = new JSONObject();
+                    orderJSONObject.put("ID", order.getID());
+                    orderJSONObject.put("Items", order.getItems());
+                    orderJSONObject.put("Total", order.getTotalPrice());
+
+                    String category = order.getID(); // Use customer ID as the category (order ID)
+
+                    StringBuilder itemsString = new StringBuilder();
+
+                    for (MenuItem item : order.getItems()) {
+                        itemsString.append(item.getCategory() + "-" + item.getItemName() + ",");
+                    }
+
+                    itemsString.deleteCharAt(itemsString.length() - 1); // delete last comma
+                    orderJSONObject.put("Items", itemsString.toString());
+
+                    JSONArray categoryArray = (categoriesJSON.containsKey(category))
+                            ? (JSONArray) categoriesJSON.get(category)
+                            : new JSONArray();
+                    categoryArray.add(orderJSONObject);
+                    categoriesJSON.put(category, categoryArray);
+                }
+            }
+            // Write categories JSON to file
+            fileWriter.write(categoriesJSON.toJSONString());
+            System.out.println("ORDERS JSON CREATED AND SAVED");
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    // create new order
+    public void createOrder(Order order) {
+        for (Customer customer : customers) {
+            if (customer.getID().equals(order.getID())) {
+                customer.getOrders().add(order);
+            }
+        }
+//        saveOrders();
     }
 
     // PAYMENTS //////////////////////////////////

@@ -78,6 +78,8 @@ public class OrderViewPanel extends CustomPanel {
                 Config.getButtonBackgroundColor(), Config.getButtonHoverColor(),
                 BorderFactory.createEmptyBorder(5, 8, 5, 8));
 
+
+        // order button action
         orderButton.addActionListener(new ActionListener() {
 
             @Override
@@ -91,6 +93,15 @@ public class OrderViewPanel extends CustomPanel {
 
         layoutComponents();
         styling();
+
+
+        // cancel button action
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuListener.cancelMenuEvent();
+            }
+        });
     }
 
     public void setCustomer(Customer customer) {

@@ -55,7 +55,9 @@ public class MenuCategoryPanel extends CustomPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                addToCartListener.itemAdded(itemList.getSelectedItem());
+                if (itemList.getSelectedItem() != null) {
+                    addToCartListener.itemAdded(itemList.getSelectedItem());
+                }
             } //  on add button click, pass the selected item to the addToCartListener in the menuPanel, which will pass it to the orderViewPanel
         });
 

@@ -7,4 +7,6 @@ import java.util.EventListener;
 public interface MenuListener extends EventListener {
 
     void newOrderEvent(Order order);
+
+    public void cancelMenuEvent();
 }

@@ -1,9 +1,6 @@
 package controller;
 
-import model.Customer;
-import model.Database;
-import model.MenuItem;
-import model.PrebuiltPizza;
+import model.*;
 
 import java.util.LinkedList;
 
@@ -54,6 +51,20 @@ public class Controller {
 
     public boolean existingCustomer(String phoneNumber) {
         return this.db.existingCustomer(phoneNumber);
+    }
+
+    // ORDERS
+
+    public void saveOrders() {
+        this.db.saveOrders();
+    }
+
+//    public void loadOrders() {
+//        this.db.loadOrders();
+//    }
+
+    public void createOrder(Order newOrder) {
+        this.db.createOrder(newOrder);
     }
 
 
