@@ -107,8 +107,14 @@ public class MainFrame extends JFrame {
         this.homePanel.setMenuListener(new MenuListener() { // handles the employee new order panel events
             @Override
             public void newOrderEvent(Order newOrder) {
-                MainFrame.this.controller.createOrder(newOrder); // add the order to the database
-                MainFrame.this.controller.saveOrders(); // save the orders to the database
+//                homePanel.setCheckoutPanel(newOrder); //  set the order items in the checkout screen
+//                CardLayout cl = (CardLayout) homePanel.getContainerPanel().getLayout();
+//                cl.show(homePanel.getContainerPanel(), "CHECKOUT_PANEL");
+
+                MainFrame.this.controller.createOrder(newOrder);
+                MainFrame.this.controller.saveOrders();
+
+
             }
 
             @Override

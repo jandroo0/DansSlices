@@ -8,6 +8,7 @@ import gui.home.menu.MenuListener;
 import gui.home.menu.MenuPanel;
 import model.Customer;
 import model.MenuItem;
+import model.Order;
 import model.PrebuiltPizza;
 
 import javax.swing.*;
@@ -29,6 +30,8 @@ public class HomePanel extends CustomPanel {
 
     private final CustomPanel buttonPanel; // buttonPanel to display navigation buttons
     private final MenuPanel menuPanel; // add the menuPanel
+
+    private final CheckoutPanel checkoutPanel; // checkoutPanel to display
 
     // TODO:
 //    private AccountPanel accountPanel;
@@ -57,9 +60,12 @@ public class HomePanel extends CustomPanel {
 
         menuPanel = new MenuPanel(); // menu panel
 
+        checkoutPanel = new CheckoutPanel(); // checkout panel
+
         containerPanel = new JPanel(new CardLayout()); // create card layout in container panel
         containerPanel.add(buttonPanel, "BUTTON_PANEL"); // add buttonPanel to container panel
         containerPanel.add(menuPanel, "MENU_PANEL");
+        containerPanel.add(checkoutPanel, "CHECKOUT_PANEL");
 
         CardLayout cl = (CardLayout) containerPanel.getLayout();
         cl.show(containerPanel, "BUTTON_PANEL"); // show the default home/button panel which contains the nav buttons i.e (menu, etc
@@ -90,6 +96,12 @@ public class HomePanel extends CustomPanel {
         currentCustomer = customer;
 
         menuPanel.setCustomer(customer);
+        checkoutPanel.setCustomer(customer);
+    }
+
+    public void setCheckoutPanel(Order newOrder) {
+        checkoutPanel.setOrder(newOrder);
+        checkoutPanel.setPaymentOptions();
     }
 
 
@@ -107,6 +119,10 @@ public class HomePanel extends CustomPanel {
 
     public void setMenuListener(MenuListener listener) { // set the listener for the menuPanel
         menuPanel.setMenuListener(listener);
+    }
+
+    public MenuPanel getMenuPanel() {
+        return menuPanel;
     }
 
     public JPanel getContainerPanel() {

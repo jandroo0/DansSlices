@@ -50,7 +50,7 @@ public class OrderViewPanel extends CustomPanel {
 
         // title panel
         titlePanel = new CustomPanel();
-        titleLabel = new CustomLabel("ORDER", 32);
+        titleLabel = new CustomLabel("CART", 32);
 
         // content panel
         contentPanel = new CustomPanel();

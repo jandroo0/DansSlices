@@ -11,10 +11,10 @@ import java.util.LinkedList;
 
 public class Database {
     // FILE PATHS
-    private final String customersFilePath = "customers.json";
-    private final String ordersFilePath = "orders.json";
-    private final String paymentsFilePath = "payments.json";
-    private final String menuFilePath = "menu.json";
+    private final String customersFilePath = "data\\customers.json";
+    private final String ordersFilePath = "data\\orders.json";
+    private final String paymentsFilePath = "data\\payments.json";
+    private final String menuFilePath = "data\\menu.json";
 
 
     // LISTS of DATA
@@ -187,6 +187,10 @@ public class Database {
         for (Customer customer : customers) {
             if (customer.getID().equals(order.getID())) {
                 customer.getOrders().add(order);
+                System.out.println("NEW ORDER: ID : " + customer.getID());
+                for (MenuItem item : order.getItems()) {
+                    System.out.println("    ITEM : " + item.getItemName() + " - $" + item.getPrice());
+                }
             }
         }
 //        saveOrders();

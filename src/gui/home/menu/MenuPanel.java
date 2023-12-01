@@ -15,6 +15,7 @@ public class MenuPanel extends CustomPanel {
     private final CustomPanel titlePanel; // title panel
     private final JPanel containerPanel; // container panel
     private final MenuNavPanel buttonsPanel;// nav buttons panel
+
     // COMPONENTS
     private final CustomLabel titleLabel; // title label
     private final OrderViewPanel orderViewPanel; // cart view panel
@@ -33,7 +34,7 @@ public class MenuPanel extends CustomPanel {
 
         // title
         titlePanel = new CustomPanel();
-        titleLabel = new CustomLabel("NEW ORDER", 30);
+        titleLabel = new CustomLabel("MENU", 30);
 
         categories = new LinkedList<String>();
 
@@ -48,6 +49,7 @@ public class MenuPanel extends CustomPanel {
 
         // order view panel
         orderViewPanel = new OrderViewPanel();
+
 
         buttonsPanel.setMenuNavListener(new MenuNavListener() {
 
