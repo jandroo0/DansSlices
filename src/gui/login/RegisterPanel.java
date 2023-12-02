@@ -16,50 +16,48 @@ import java.awt.event.MouseEvent;
 
 public class RegisterPanel extends JPanel {
 
-    // PANELS
+    // Panels
     private final CustomPanel titlePanel;
-    private final CustomPanel infoPanels; // info panel container
-    private final CustomPanel userInfoPanel; // customer info panel
-    private final CustomPanel buttonPanel; // button panel
-    private final CustomLabel titleLabel; // title label
-    // USER INFO
-    private final CustomPlaceholderField firstNameField;
+    private final CustomPanel infoPanels; // Info panel container
+    private final CustomPanel userInfoPanel; // Customer info panel
+    private final CustomPanel buttonPanel; // Button panel
+    private final CustomLabel titleLabel; // Title label
 
-    // INFO FIELDS
+    // User info fields
+    private final CustomPlaceholderField firstNameField;
     private final CustomPlaceholderField lastNameField;
     private final CustomPlaceholderField phoneNumberField;
     private final CustomPasswordField passwordField;
     private final CustomPlaceholderField addressField;
     private final CustomPlaceholderField detailsField;
-    // PAYMENT INFO
+
+    // Payment info fields
     private final CustomPlaceholderField cardNameField;
     private final CustomPlaceholderField cardNumberField;
     private final CustomPlaceholderField cardExpDateField;
     private final CustomPlaceholderField CVCField;
-    private final CustomButton createAccountButton; // create account  button
-    private final CustomButton cancelButton; // cancel button
-    private CustomPanel paymentInfoPanel; // payment info panel
-    private JCheckBox addPaymentBox;// "add payment ?" checkBox
 
+    private final CustomButton createAccountButton; // Create account button
+    private final CustomButton cancelButton; // Cancel button
+    private CustomPanel paymentInfoPanel; // Payment info panel
+    private JCheckBox addPaymentBox;// "Add payment?" checkBox
 
     private CreateAccountListener createAccountListener;
 
     public RegisterPanel() {
+        setLayout(new BorderLayout()); // Set layout to BorderLayout
 
-        setLayout(new BorderLayout()); // set layout to border layout
-
-        // PANELS
+        // Initialize panels
         titlePanel = new CustomPanel();
         infoPanels = new CustomPanel();
         userInfoPanel = new CustomPanel();
         paymentInfoPanel = new CustomPanel();
         buttonPanel = new CustomPanel();
 
-        // title label
+        // Initialize title label
         titleLabel = new CustomLabel("CREATE ACCOUNT", 26);
 
-
-        //user info fields
+        // Initialize user info fields
         firstNameField = new CustomPlaceholderField(" First", 140, 30, 20);
         lastNameField = new CustomPlaceholderField(" Last", 140, 30, 20);
         phoneNumberField = new CustomPlaceholderField(" Phone", 140, 30, 20, true, 10);
@@ -67,37 +65,35 @@ public class RegisterPanel extends JPanel {
         addressField = new CustomPlaceholderField(" Address", 140, 30, 20);
         detailsField = new CustomPlaceholderField(" Other", 140, 30, 20, 30);
 
-        //payment info fields
+        // Initialize payment info fields
         cardNameField = new CustomPlaceholderField(" Name on Card ", 140, 30, 18);
         cardNumberField = new CustomPlaceholderField(" Number", 140, 30, 18, true, 20);
         cardExpDateField = new CustomPlaceholderField("MM/YY", 140, 30, 18);
         CVCField = new CustomPlaceholderField(" CVC", 140, 30, 18, true, 3);
 
+        // Initialize add payment checkbox
+        addPaymentBox = new JCheckBox("Add Payment");
 
-        addPaymentBox = new JCheckBox("Add Payment"); // add payment check box
-
-        // create account button
+        // Initialize buttons
         createAccountButton = new CustomButton("REGISTER", Config.getTextFont(20), Config.getTextColor(),
                 Config.getButtonBackgroundColor(), Config.getButtonHoverColor(), BorderFactory.createEmptyBorder(5, 8, 5, 8));
-
-        // cancel button
         cancelButton = new CustomButton("CANCEL", Config.getTextFont(20), Config.getTextColor(),
                 Config.getButtonBackgroundColor(), Config.getButtonHoverColor(), BorderFactory.createEmptyBorder(5, 8, 5, 8));
 
+        // Add components to the layout
         add(titlePanel, BorderLayout.NORTH);
         add(infoPanels, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
+        // Set up layout, styling, and event handling
         layoutComponents();
         styling();
         handleEvents();
-
-
     }
 
     private void handleEvents() {
 
-        // add payment box on select show payment field
+        // Add payment box, on select show payment field
         addPaymentBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -105,46 +101,44 @@ public class RegisterPanel extends JPanel {
             }
         });
 
-
-        // create account event listener
+        // Create account event listener
         createAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!fieldsEmpty()) { // if textFields are not empty and do not still equal the placeholders
+                if (!fieldsEmpty()) {
                     String details;
-                    // in case details field is left empty, however since there is a placeHolder text -- "Other Details" , it needs to check in order to send the proper info
                     if (detailsField.getText().equals(" Other Info")) {
-                        details = ""; // if detailsField still = Other Details
+                        details = "";
                     } else details = detailsField.getText();
 
                     Customer newCustomer = new Customer(phoneNumberField.getText(), passwordField.getText(), firstNameField.getText(),
                             lastNameField.getText(), addressField.getText(), details);
 
-                    if (addPaymentBox.isSelected()) { // add payment details if paymentBox is selected
-                        Payment newPayment = new CardPayment(phoneNumberField.getText(), cardNameField.getText(), cardNumberField.getText(),
-                                cardExpDateField.getText(), CVCField.getText());
+                    if (addPaymentBox.isSelected()) {
+                        Payment newPayment = new CardPayment(phoneNumberField.getText(), cardNameField.getText(),
+                                cardNumberField.getText(), cardExpDateField.getText(), CVCField.getText());
                         newCustomer.addPayment(newPayment);
                     }
 
                     try {
                         clearFields();
-                        RegisterPanel.this.createAccountListener.createAccount(newCustomer); // call create account event
+                        RegisterPanel.this.createAccountListener.createAccount(newCustomer);
                     } catch (BadLocationException ex) {
                         ex.printStackTrace();
                     }
                 } else {
-                    JOptionPane.showMessageDialog(RegisterPanel.this, "Info fields can not be left empty", "Empty Fields", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(RegisterPanel.this, "Info fields can not be left empty",
+                            "Empty Fields", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-
-        // cancel button event
+        // Cancel button event
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    clearFields(); // clear fields
+                    clearFields();
                 } catch (BadLocationException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -153,16 +147,14 @@ public class RegisterPanel extends JPanel {
         });
     }
 
-
     public void setCreateAccountListener(CreateAccountListener listener) {
         this.createAccountListener = listener;
     }
 
-
     private void layoutComponents() {
         GridBagConstraints gc = new GridBagConstraints();
 
-        // title panel
+        // Title panel
         titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         titlePanel.setLayout(new GridBagLayout());
         gc.gridx = 0;
@@ -172,14 +164,12 @@ public class RegisterPanel extends JPanel {
         gc.gridy++;
         titlePanel.add(addPaymentBox, gc);
 
-        //info panels
+        // Info panels
         infoPanels.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         infoPanels.setLayout(new GridLayout(0, 1));
-
         infoPanels.add(userInfoPanel);
 
-
-        //user info panel
+        // User info panel
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         userInfoPanel.setLayout(new GridBagLayout());
         gc = new GridBagConstraints();
@@ -198,10 +188,8 @@ public class RegisterPanel extends JPanel {
         gc.gridy++;
         userInfoPanel.add(detailsField, gc);
 
-
-        //payment info panel
+        // Payment info panel
         paymentInfoPanel.setBorder(BorderFactory.createCompoundBorder());
-
         paymentInfoPanel.setLayout(new GridBagLayout());
         gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -215,8 +203,7 @@ public class RegisterPanel extends JPanel {
         gc.gridy++;
         paymentInfoPanel.add(CVCField, gc);
 
-
-        //button panel
+        // Button panel
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
         buttonPanel.setLayout(new GridBagLayout());
         gc = new GridBagConstraints();
@@ -228,13 +215,11 @@ public class RegisterPanel extends JPanel {
         gc.insets = new Insets(0, 10, 10, 0);
         buttonPanel.add(createAccountButton, gc);
 
-
-        // check box hover effect
+        // Check box hover effect
         addPaymentBox.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
-
                 addPaymentBox.setForeground(Config.getButtonBackgroundColor());
             }
 
@@ -246,20 +231,16 @@ public class RegisterPanel extends JPanel {
                 }
             }
         });
-
     }
 
     private void styling() {
-        // add payment checkbox
+        // Add payment checkbox
         addPaymentBox.setBackground(Config.getBackgroundColor());
         addPaymentBox.setBorder(BorderFactory.createEmptyBorder());
         addPaymentBox.setFont(Config.getTextFont(18));
-
-
         switchPaymentFields();
     }
 
-    // for each placeholder textField, check whether it still contains the placeholder, or nothing
     private boolean fieldsEmpty() {
         if (addPaymentBox.isSelected()) {
             if (cardNameField.getText().equals("")) {
@@ -280,15 +261,12 @@ public class RegisterPanel extends JPanel {
         } else return addressField.getText().equals("");
     }
 
-    // check if add payment box is selected, display payment fields
     private void switchPaymentFields() {
         if (addPaymentBox.isSelected()) {
             infoPanels.add(paymentInfoPanel);
         } else infoPanels.remove(paymentInfoPanel);
-
     }
 
-    // clear textFields
     public void clearFields() throws BadLocationException {
         firstNameField.setText("");
         lastNameField.setText("");
@@ -305,5 +283,4 @@ public class RegisterPanel extends JPanel {
         addPaymentBox.setSelected(false);
         switchPaymentFields();
     }
-
 }

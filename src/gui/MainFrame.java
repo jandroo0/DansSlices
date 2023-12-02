@@ -15,70 +15,72 @@ import java.awt.*;
 public class MainFrame extends JFrame {
 
     // PANELS
-    private TitlePanel titlePanel; // title panel
-    private JPanel containerPanel; // main container panel, contains: login panel,
-    private LoginPanel loginPanel; // login panel which contains both the sign in and register screens
-    private HomePanel homePanel; // home panel which contains: menuPanel,
+    private TitlePanel titlePanel; // Title panel at the top of the window
+    private JPanel containerPanel; // Main container panel holding login and home panels
+    private LoginPanel loginPanel; // Panel containing sign in and register screens
+    private HomePanel homePanel; // Panel displaying the home screen with menu
 
-    private Controller controller; // "DATABASE" CONTROLLER
+    private Controller controller; // Controller for database interaction
 
     public MainFrame() {
-        super("DANS SLICES"); // set window title
+        super("DANS SLICES"); // Set window title
 
-        controller = new Controller(); // create controller, loads all data, controls database interaction
+        controller = new Controller(); // Create controller, loads data, and manages database interaction
 
-        // window settings
-        setSize(Config.getWIDTH(), Config.getHEIGHT()); // set frame size
-        setResizable(false); // set resizable true
-        setLocationRelativeTo(null); // centers window to screen when opened
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // closes when clicking 'X'
-        setVisible(true); // set window visible
+        // Window settings
+        setSize(Config.getWIDTH(), Config.getHEIGHT()); // Set frame size
+        setResizable(false); // Make the window non-resizable
+        setLocationRelativeTo(null); // Center the window on the screen
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close the application when clicking 'X'
+        setVisible(true); // Make the window visible
 
-        setLayout(new BorderLayout()); // set window layout to a border layout
+        setLayout(new BorderLayout()); // Set window layout to a border layout
 
         // COMPONENTS
 
-        // title panel
+        // Title panel
         titlePanel = new TitlePanel();
 
-        // login panel(contains sign in and register panels)
+        // Login panel (contains sign in and register panels)
         loginPanel = new LoginPanel();
 
-        // home panel
+        // Home panel
         homePanel = new HomePanel();
-        homePanel.setMenuItems(MainFrame.this.controller.getMenu(), MainFrame.this.controller.getPrebuiltPizzas()); // set the menu items
+        homePanel.setMenuItems(MainFrame.this.controller.getMenu(), MainFrame.this.controller.getPrebuiltPizzas()); // Set the menu items
 
-        containerPanel = new JPanel(new CardLayout()); // main container panel setup with cardLayout
-        containerPanel.add(loginPanel, "LOGIN_PANEL"); // add login panel to the main container panel
-        containerPanel.add(homePanel, "HOME_PANEL"); // add home panel to the main container panel
+        containerPanel = new JPanel(new CardLayout()); // Main container panel setup with CardLayout
+        containerPanel.add(loginPanel, "LOGIN_PANEL"); // Add login panel to the main container panel
+        containerPanel.add(homePanel, "HOME_PANEL"); // Add home panel to the main container panel
 
-        CardLayout cl = (CardLayout) containerPanel.getLayout(); // get cardLayout from main container panel
-        cl.show(containerPanel, "LOGIN_PANEL"); // show login panel on default
+        CardLayout cl = (CardLayout) containerPanel.getLayout(); // Get CardLayout from the main container panel
+        cl.show(containerPanel, "LOGIN_PANEL"); // Show the login panel by default
 
-        // add components to MainFrame
-        add(titlePanel, BorderLayout.NORTH); // add title panel to NORTH position
-        add(containerPanel, BorderLayout.CENTER); // add container panel to CENTER position
+        // Add components to MainFrame
+        add(titlePanel, BorderLayout.NORTH); // Add title panel to NORTH position
+        add(containerPanel, BorderLayout.CENTER); // Add container panel to CENTER position
 
-        handleEventListeners();
+        handleEventListeners(); // Set up event listeners
     }
 
+    // Set up event listeners for login and menu actions
     private void handleEventListeners() {
-        loginPanel.setLoginListener(new LoginListener() { // login panel listener
+        loginPanel.setLoginListener(new LoginListener() { // Login panel listener
             @Override
             public void accountCreatedEvent(Customer newCustomer) {
-
-                if (!MainFrame.this.controller.existingCustomer(newCustomer.getPhoneNumber())) { // if there is no existing customer with the same phone number
-                    MainFrame.this.controller.addCustomer(newCustomer); // add customer to customers list
+                // Handle new customer account creation
+                if (!MainFrame.this.controller.existingCustomer(newCustomer.getPhoneNumber())) {
+                    MainFrame.this.controller.addCustomer(newCustomer);
                     System.out.println("CUSTOMER CREATED: " + newCustomer.getID() + ":" + newCustomer.getFirstName());
 
-                    if (!newCustomer.getPayments().isEmpty()) { // if there are payments
-                        MainFrame.this.controller.savePayments(); // save payments
+                    if (!newCustomer.getPayments().isEmpty()) {
+                        MainFrame.this.controller.savePayments();
                         System.out.println("PAYMENT METHOD SAVED: " + newCustomer.getPayments().getFirst());
                     }
 
                     JOptionPane.showMessageDialog(MainFrame.this, "Account Registered!", "New Account Registered", JOptionPane.ERROR_MESSAGE);
 
                 } else {
+                    // Display error if phone number is already in use
                     JOptionPane.showMessageDialog(MainFrame.this, "\"" + newCustomer.getPhoneNumber() + "\" is already in use.", "Phone # in use", JOptionPane.ERROR_MESSAGE);
 
                     CardLayout cl = (CardLayout) loginPanel.getContainerPanel().getLayout();
@@ -87,42 +89,39 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void loginEvent(String phoneNumber, String password) { // login event
-                if (MainFrame.this.controller.customerLogin(phoneNumber, password) != null) { // if the returned customer is not null
-                    Customer customer = MainFrame.this.controller.customerLogin(phoneNumber, password); // set customer to logged in customer
+            public void loginEvent(String phoneNumber, String password) {
+                // Handle customer login
+                if (MainFrame.this.controller.customerLogin(phoneNumber, password) != null) {
+                    Customer customer = MainFrame.this.controller.customerLogin(phoneNumber, password);
 
-                    CardLayout cl = (CardLayout) containerPanel.getLayout(); // get the cardLayout from the main container
-                    cl.show(containerPanel, "HOME_PANEL"); // switch to the homePanel containing the menu,
+                    CardLayout cl = (CardLayout) containerPanel.getLayout();
+                    cl.show(containerPanel, "HOME_PANEL");
 
-                    homePanel.setCustomer(customer); // set the current customer
-                    System.out.println("CUSTOMER : " + customer.getID() + " : " + customer.getFirstName() + " | LOGGED IN"); // print log in messsage
+                    homePanel.setCustomer(customer);
+                    System.out.println("CUSTOMER : " + customer.getID() + " : " + customer.getFirstName() + " | LOGGED IN");
 
                 } else {
+                    // Display error if login fails
                     JOptionPane.showMessageDialog(MainFrame.this, "No account linked to phone number / Password is incorrect",
-                            "Account not found", JOptionPane.ERROR_MESSAGE); // if account not found show error message
+                            "Account not found", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        this.homePanel.setMenuListener(new MenuListener() { // handles the employee new order panel events
+        this.homePanel.setMenuListener(new MenuListener() { // Menu panel listener
             @Override
             public void newOrderEvent(Order newOrder) {
-//                homePanel.setCheckoutPanel(newOrder); //  set the order items in the checkout screen
-//                CardLayout cl = (CardLayout) homePanel.getContainerPanel().getLayout();
-//                cl.show(homePanel.getContainerPanel(), "CHECKOUT_PANEL");
-
+                // Handle new order creation
                 MainFrame.this.controller.createOrder(newOrder);
                 MainFrame.this.controller.saveOrders();
-
-
             }
 
             @Override
             public void cancelMenuEvent() {
+                // Handle menu cancellation
                 CardLayout cl = (CardLayout) homePanel.getContainerPanel().getLayout();
                 cl.show(homePanel.getContainerPanel(), "BUTTON_PANEL");
             }
         });
-
     }
 }

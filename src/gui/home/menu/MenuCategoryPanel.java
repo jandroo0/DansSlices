@@ -13,74 +13,78 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
-
-/*For each category of menu item, a new panel is made to fit the items of that category.*/
+/*
+   This class represents a panel for a specific category of menu items.
+   For each category, an instance of this class is created to display and handle items of that category.
+*/
 public class MenuCategoryPanel extends CustomPanel {
 
     // PANELS
     private final CustomPanel titlePanel;
     private final CustomPanel listPanel;
+
     // COMPONENTS
-    private final CustomLabel titleLabel; //  title label
-    private final CustomMenuListComponent itemList;
-    private final LinkedList<MenuItem> items;
-    private final CustomButton addButton;
-    String category; // set item category for this panel
-    private AddToCartListener addToCartListener;
+    private final CustomLabel titleLabel; // Title label for the category
+    private final CustomMenuListComponent itemList; // Custom component to display a list of menu items
+    private final LinkedList<MenuItem> items; // List to store menu items for this category
+    private final CustomButton addButton; // Button to add selected item to the cart
+    String category; // Category name for this panel
+    private AddToCartListener addToCartListener; // Listener to notify when an item is added to the cart
 
+    // Constructor
     public MenuCategoryPanel(String category) {
-
         this.category = category;
 
-        // title
+        // Title
         titleLabel = new CustomLabel(category, 30);
         titlePanel = new CustomPanel();
 
-        // list panel
+        // List panel
         listPanel = new CustomPanel();
 
-        // category items
+        // Category items
         items = new LinkedList<MenuItem>();
 
-        // items list
+        // Items list
         itemList = new CustomMenuListComponent(13, new Dimension(150, 200));
         itemList.setAlignCenter(true);
 
-        // add button
+        // Add button
         addButton = new CustomButton("ADD", Config.getTextFont(16), Config.getTextColor(),
                 Config.getButtonBackgroundColor(), Config.getButtonHoverColor(),
                 BorderFactory.createEmptyBorder(5, 8, 5, 8));
 
-        addButton.addActionListener(new ActionListener() { // add button actionListener
-
+        // Add ActionListener to the add button
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // When the add button is clicked, check if an item is selected and notify the addToCartListener
                 if (itemList.getSelectedItem() != null) {
                     addToCartListener.itemAdded(itemList.getSelectedItem());
                 }
-            } //  on add button click, pass the selected item to the addToCartListener in the menuPanel, which will pass it to the orderViewPanel
+            }
         });
 
-
+        // Set up the layout and apply styling
         layoutComponents();
         styling();
-
     }
 
+    // Set the listener for item addition to the cart
     public void setAddToCartListener(AddToCartListener listener) {
         this.addToCartListener = listener;
     }
 
-
+    // Layout the components in the panel
     private void layoutComponents() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 2, 0, 4),
                 BorderFactory.createLineBorder(Config.getTextColor(), 2, true)));
 
-        // title panel
+        // Title panel
         titlePanel.add(titleLabel);
 
-        //list panel
+        // List panel
         listPanel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -90,27 +94,28 @@ public class MenuCategoryPanel extends CustomPanel {
         gc.gridy++;
         listPanel.add(addButton, gc);
 
-
+        // Add title panel and list panel to the MenuCategoryPanel
         add(titlePanel, BorderLayout.NORTH);
         add(listPanel, BorderLayout.CENTER);
     }
 
-    private void styling() { // custom styling
-
-
+    // Apply custom styling to the components
+    private void styling() {
+        // Custom styling can be added here if needed
     }
 
+    // Add an item to the category
     public void addItem(MenuItem item) {
         items.add(item);
         itemList.addItem(item);
     }
 
+    // Clear the list of items in the category
     public void clearList() {
         itemList.clearList();
     }
 
-
-    // get category
+    // Get the category name
     public String getCategory() {
         return category;
     }

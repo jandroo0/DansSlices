@@ -12,8 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
+// JPanel subclass for a pizza builder GUI
 public class PizzaBuilderPanel extends JPanel {
 
+    // Components for the pizza builder panel
     private final CustomMenuListComponent availableIngredientsList;
     private final CustomMenuListComponent selectedIngredientsList;
     private final CustomButton removePizzaButton;
@@ -31,15 +33,14 @@ public class PizzaBuilderPanel extends JPanel {
     private CustomPanel ingredientsPanel;
     private CustomPanel pizzaPanel;
 
-//    private PizzaBuilderListener pizzaBuilderListener;
-
+    // Constructor for PizzaBuilderPanel
     public PizzaBuilderPanel() {
         setLayout(new BorderLayout());
         setBackground(Config.getBackgroundColor());
         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5),
                 BorderFactory.createLineBorder(Config.getTextColor(), 2, true)));
 
-        // panels
+        // Initialize panels and components
         titlePanel = new CustomPanel();
         contentsPanel = new CustomPanel();
         ingredientsPanel = new CustomPanel();
@@ -48,17 +49,22 @@ public class PizzaBuilderPanel extends JPanel {
         titleLabel = new CustomLabel("Pizza Builder", 30);
 
         availableIngredientsList = new CustomMenuListComponent(13, new Dimension(220, 160));
+        // Set border for the available ingredients list
         availableIngredientsList.setBorder(BorderFactory.createLineBorder(Config.getButtonBackgroundColor(), 2, true));
 
         selectedIngredientsList = new CustomMenuListComponent(13, new Dimension(220, 160));
+        // Set border for the selected ingredients list
         selectedIngredientsList.setBorder(BorderFactory.createLineBorder(Config.getButtonBackgroundColor(), 2, true));
 
+        // Set special format display for both ingredient lists
         availableIngredientsList.setDisplayInSpecialFormat(true);
         selectedIngredientsList.setDisplayInSpecialFormat(true);
 
         pizzasList = new CustomMenuListComponent(13, new Dimension(150, 100));
+        // Set border for the pizzas list
         pizzasList.setBorder(BorderFactory.createLineBorder(Config.getButtonBackgroundColor(), 2, true));
 
+        // Initialize buttons and placeholder fields
         addButton = new CustomButton("Add", Config.getTextFont(16), Config.getTextColor(),
                 Config.getButtonBackgroundColor(), Config.getButtonHoverColor(),
                 BorderFactory.createEmptyBorder(5, 8, 5, 8));
@@ -78,19 +84,21 @@ public class PizzaBuilderPanel extends JPanel {
         pizzaNameField = new CustomPlaceholderField("NEW PIZZA", 120, 24, 16);
         pizzaPriceField = new CustomPlaceholderField("$", 50, 24, 16);
 
-
+        // Layout components on the panel
         layoutComponents();
 
+        // Add components to the panel
         add(contentsPanel, BorderLayout.CENTER);
 
+        // Add action listeners for buttons
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Add selected ingredient to the selected list and remove it from available list
                 Ingredient selectedIngredient = (Ingredient) availableIngredientsList.getSelectedItem();
                 if (selectedIngredient != null) {
                     selectedIngredientsList.addItem(selectedIngredient);
                     availableIngredientsList.removeSelectedItem();
-
                 }
             }
         });
@@ -98,6 +106,7 @@ public class PizzaBuilderPanel extends JPanel {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Add selected ingredient back to available list and remove it from the selected list
                 Ingredient selectedIngredient = (Ingredient) selectedIngredientsList.getSelectedItem();
                 if (selectedIngredient != null) {
                     availableIngredientsList.addItem(selectedIngredient);
@@ -106,30 +115,32 @@ public class PizzaBuilderPanel extends JPanel {
             }
         });
 
-
         removePizzaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Remove selected pizza from the pizzas list
                 PrebuiltPizza selectedPizza = (PrebuiltPizza) pizzasList.getSelectedItem();
                 if (selectedPizza != null) {
                     pizzasList.removeSelectedItem();
-//                    editMenuListener.removePizzaEvent(selectedPizza);
+                    // Notify listener about the removal event (commented out for reference)
+                    // editMenuListener.removePizzaEvent(selectedPizza);
                 }
             }
         });
 
-        applyStyling(); // Apply styling immediately
+        // Apply styling immediately
+        applyStyling();
     }
 
+    // Layout components on the panel
     private void layoutComponents() {
-
-        // titlePanel
+        // Set up title panel
         titlePanel.add(titleLabel);
 
-        // constraints for gridbaglayout
+        // Constraints for GridBagLayout
         GridBagConstraints gc = new GridBagConstraints();
 
-        // ingredients panel
+        // Set up ingredients panel with available and selected ingredient lists, and add/remove buttons
         ingredientsPanel.setLayout(new GridBagLayout());
         gc.gridx = 0;
         gc.gridy = 0;
@@ -146,8 +157,7 @@ public class PizzaBuilderPanel extends JPanel {
         gc.insets = new Insets(0, 10, 0, 0);
         ingredientsPanel.add(removeButton, gc);
 
-
-        // pizza panel
+        // Set up pizza panel with pizzas list, remove pizza button, pizza name, price, and build button
         pizzaPanel.setLayout(new GridBagLayout());
         pizzaPanel.setBorder(BorderFactory.createEmptyBorder());
         gc.gridx = 0;
@@ -169,8 +179,7 @@ public class PizzaBuilderPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 0);
         pizzaPanel.add(savePizzaButton, gc);
 
-
-        // contents panel
+        // Set up contents panel with pizza panel and ingredients panel
         GridLayout gridLayout = new GridLayout(2, 1);
         gridLayout.setVgap(0);
         contentsPanel.setLayout(gridLayout);
@@ -178,17 +187,17 @@ public class PizzaBuilderPanel extends JPanel {
         contentsPanel.add(pizzaPanel);
         contentsPanel.add(ingredientsPanel);
 
-
+        // Add title panel and contents panel to the main panel
         add(titlePanel, BorderLayout.NORTH);
         add(contentsPanel, BorderLayout.CENTER);
-
     }
 
-
+    // Apply styling (empty for now, may be implemented later)
     private void applyStyling() {
-
+        // Add styling code here if needed
     }
 
+    // Set the available ingredients for the builder panel
     public void setAvailableIngredients(LinkedList<Ingredient> ingredients) {
         this.originalIngredientsList = ingredients;
         availableIngredientsList.clearList();
@@ -197,6 +206,7 @@ public class PizzaBuilderPanel extends JPanel {
         }
     }
 
+    // Set the list of prebuilt pizzas for the builder panel
     public void setPizzasList(LinkedList<PrebuiltPizza> pizzas) {
         pizzasList.clearList();
         for (PrebuiltPizza pizza : pizzas) {
@@ -204,16 +214,13 @@ public class PizzaBuilderPanel extends JPanel {
         }
     }
 
+    // Get the selected ingredients from the builder panel
     public LinkedList<MenuItem> getSelectedIngredients() {
         return selectedIngredientsList.getList();
     }
 
+    // Get the list of pizzas from the builder panel
     public LinkedList<MenuItem> getPizzas() {
         return pizzasList.getList();
     }
-
-
-//    public void setEditMenuListener(EditMenuListener listener) {
-//        this.editMenuListener = listener;
-//    }
 }

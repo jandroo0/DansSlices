@@ -9,65 +9,80 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+// Custom JPanel for displaying a list of MenuItems
 public class CustomMenuListComponent extends JPanel {
 
+    // Components
     private JList<MenuItem> list;
     private DefaultListModel<MenuItem> model;
     private JScrollPane scrollPane;
     private boolean displayItemCount, displayInSpecialFormat, alignCenter;
     private Map<MenuItem, Integer> itemCounter;
 
+    // Constructor
     public CustomMenuListComponent(int fontSize, Dimension preferredSize) {
         setLayout(new BorderLayout());
         setPreferredSize(preferredSize);
 
+        // Initialize components
         list = new JList<>();
         scrollPane = new JScrollPane(list);
 
+        // Set preferred size and border for the scroll pane
         scrollPane.setPreferredSize(preferredSize);
         scrollPane.setBorder(BorderFactory.createLineBorder(Config.getButtonBackgroundColor(), 2, true));
 
+        // Initialize the DefaultListModel for the JList
         model = new DefaultListModel<>();
         list.setModel(model);
         list.setCellRenderer(new CustomListCellRenderer());
 
+        // Set font, background, foreground, and selection mode for the JList
         list.setFont(Config.getTextFont(fontSize));
         list.setBorder(BorderFactory.createLineBorder(Config.getButtonBackgroundColor(), 2, true));
         list.setBackground(Config.getButtonBackgroundColor());
         list.setForeground(Config.getTextColor());
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
+        // Add the scroll pane to the center of the panel
         add(scrollPane, BorderLayout.CENTER);
 
-        this.displayItemCount = false; // Set the default value
+        // Set default values for optional features
+        this.displayItemCount = false;
         this.itemCounter = new HashMap<>();
-        this.displayInSpecialFormat = false; // Set the default value
+        this.displayInSpecialFormat = false;
     }
 
+    // Set whether to display item count
     public void setDisplayItemCount(boolean displayItemCount) {
         this.displayItemCount = displayItemCount;
     }
 
+    // Set whether to display items in a special format
     public void setDisplayInSpecialFormat(boolean displayInSpecialFormat) {
         this.displayInSpecialFormat = displayInSpecialFormat;
     }
 
+    // Set whether to align items to the center
     public void setAlignCenter(boolean alignCenter) {
         this.alignCenter = alignCenter;
     }
 
+    // Add an item to the list
     public void addItem(MenuItem item) {
         if (itemCounter.containsKey(item)) {
+            // Increment the count if the item is already in the list
             int count = itemCounter.get(item) + 1;
             itemCounter.put(item, count);
         } else {
+            // Add the item to the list and set count to 1
             itemCounter.put(item, 1);
             model.addElement(item);
         }
         list.repaint(); // Force the list to repaint
-
     }
 
+    // Get the selected item from the list
     public MenuItem getSelectedItem() {
         int selectedIndex = list.getSelectedIndex();
         if (selectedIndex != -1) {
@@ -77,6 +92,7 @@ public class CustomMenuListComponent extends JPanel {
         return null;
     }
 
+    // Set the list of MenuItems
     public void setList(LinkedList<MenuItem> items) {
         DefaultListModel<MenuItem> model = (DefaultListModel<MenuItem>) list.getModel();
         model.removeAllElements();
@@ -85,6 +101,7 @@ public class CustomMenuListComponent extends JPanel {
         }
     }
 
+    // Get the list of MenuItems
     public LinkedList<MenuItem> getList() {
         DefaultListModel<MenuItem> model = (DefaultListModel<MenuItem>) list.getModel();
         LinkedList<MenuItem> items = new LinkedList<>();
@@ -94,6 +111,7 @@ public class CustomMenuListComponent extends JPanel {
         return items;
     }
 
+    // Remove the selected item from the list
     public void removeSelectedItem() {
         int selectedIndex = list.getSelectedIndex();
         if (selectedIndex != -1) {
@@ -102,27 +120,33 @@ public class CustomMenuListComponent extends JPanel {
         }
     }
 
+    // Clear the list and item counter
     public void clearList() {
         DefaultListModel<MenuItem> model = (DefaultListModel<MenuItem>) list.getModel();
         model.removeAllElements();
         itemCounter.clear();
     }
 
+    // Custom cell renderer for formatting list items
     private class CustomListCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
+            // Format the display text based on options and item type
             if (value instanceof MenuItem) {
                 MenuItem menuItem = (MenuItem) value;
                 if (displayItemCount) {
+                    // Display item count if enabled
                     int count = itemCounter.get(menuItem);
                     setText(menuItem.getItemName() + " $" + String.format("%.2f", menuItem.getPrice()) + " x" + count);
                 } else if (displayInSpecialFormat) {
+                    // Display in special format if enabled
                     setText(menuItem.getCategory() + " - " + menuItem.getItemName() + " $" + String.format("%.2f", menuItem.getPrice()));
                 }
             }
 
+            // Align text to the center if specified
             if (alignCenter) {
                 setHorizontalAlignment(SwingConstants.CENTER);
             }
@@ -131,6 +155,7 @@ public class CustomMenuListComponent extends JPanel {
         }
     }
 }
+
 
 
 //package gui.tools;

@@ -10,41 +10,38 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 public class Database {
+
     // FILE PATHS
     private final String customersFilePath = "data\\customers.json";
     private final String ordersFilePath = "data\\orders.json";
     private final String paymentsFilePath = "data\\payments.json";
     private final String menuFilePath = "data\\menu.json";
 
-
     // LISTS of DATA
-    private final LinkedList<Customer> customers; // create list of customer
-    private final LinkedList<Payment> payments; // create list of customer
-    private final LinkedList<MenuItem> menu; // create list of menu items
-    private LinkedList<PrebuiltPizza> prebuiltPizzas; // create list of prebuilt pizzas
-
+    private final LinkedList<Customer> customers; // List of customers
+    private final LinkedList<Payment> payments; // List of payments
+    private final LinkedList<MenuItem> menu; // List of menu items
+    private LinkedList<PrebuiltPizza> prebuiltPizzas; // List of prebuilt pizzas
 
     private FileWriter fileWriter;
 
+    // Constructor to initialize Database with empty lists
     public Database() {
-
-        customers = new LinkedList<Customer>(); // create list of customers
-        payments = new LinkedList<Payment>(); // create list of customers
+        customers = new LinkedList<Customer>();
+        payments = new LinkedList<Payment>();
         menu = new LinkedList<MenuItem>();
-        prebuiltPizzas = new LinkedList<PrebuiltPizza>(); // create list of prebuilt pizzas
-
+        prebuiltPizzas = new LinkedList<PrebuiltPizza>();
     }
 
     // CUSTOMERS //////////////////////////////////
 
-
-    // add customer
+    // Add customer to the list and save to file
     public void addCustomer(Customer customer) {
         this.customers.add(customer);
         saveCustomers();
     }
 
-    // check if given phoneNumber exists
+    // Check if a customer with the given phoneNumber exists
     public boolean existingCustomer(String phoneNumber) {
         for (Customer customer : customers) {
             if (customer.getID().equals(phoneNumber)) return true;
@@ -52,9 +49,9 @@ public class Database {
         return false;
     }
 
-    //  checks if customer login matches customer in list and returns customer or null
+    // Check customer login credentials and return the customer or null
     public Customer customerLogin(String phoneNumber, String password) {
-        loadCustomers(); // refresh list
+        loadCustomers(); // Refresh the list
         for (Customer customer : customers) {
             if (phoneNumber.equals(customer.getID()) && password.equals(customer.getPassword())) {
                 return customer;
@@ -63,24 +60,22 @@ public class Database {
         return null;
     }
 
-    //save customers
+    // Save customers to a JSON file
     public void saveCustomers() {
         try {
             fileWriter = new FileWriter(customersFilePath);
             StringBuilder sb = new StringBuilder();
             sb.append("[");
 
-            // for each employee create json object and write to file
             for (Customer customer : customers) {
                 JSONObject jsonObject = new JSONObject();
-
+                // Create a JSON object for each customer
                 jsonObject.put("Phone_Number", customer.getPhoneNumber());
                 jsonObject.put("Password", customer.getPassword());
                 jsonObject.put("First_Name", customer.getFirstName());
                 jsonObject.put("Last_Name", customer.getLastName());
                 jsonObject.put("Address", customer.getAddress());
                 jsonObject.put("Details", customer.getDetails());
-
 
                 sb.append(jsonObject.toJSONString() + ',');
             }
@@ -95,21 +90,17 @@ public class Database {
         }
     }
 
-    // load customers
+    // Load customers from a JSON file
     public void loadCustomers() {
-        customers.clear(); // clear current list of customers
+        customers.clear(); // Clear the current list of customers
 
-        // LOAD CUSTOMERS---------------------------------------------
         try {
-            JSONParser parser = new JSONParser(); //create JSON parser
-            JSONArray customersJSON = (JSONArray) parser.parse(new FileReader(customersFilePath)); // create JSONarray from file
+            JSONParser parser = new JSONParser();
+            JSONArray customersJSON = (JSONArray) parser.parse(new FileReader(customersFilePath));
 
             System.out.println("LOADING CUSTOMERS --------------");
-            for (Object customerJSON : customersJSON) { // for each employee JSON in employees file
-
-                JSONObject customer = (JSONObject) customerJSON; // create employee object from json
-
-                // gather values
+            for (Object customerJSON : customersJSON) {
+                JSONObject customer = (JSONObject) customerJSON;
 
                 String phoneNumber = (String) customer.get("Phone_Number");
                 String password = (String) customer.get("Password");
@@ -118,13 +109,9 @@ public class Database {
                 String address = (String) customer.get("Address");
                 String details = (String) customer.get("Details");
 
-
-                // add new employee to current employees list
-
                 Customer newCustomer = new Customer(phoneNumber, password, firstName, lastName, address, details);
-                customers.add(newCustomer); // add each customer to list
+                customers.add(newCustomer);
 
-                //log message
                 System.out.println("CUSTOMER LOADED: " + newCustomer.getID() + ":" + newCustomer.getFirstName());
             }
             System.out.println("CUSTOMERS LOADED --------------");
@@ -132,23 +119,19 @@ public class Database {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     // CUSTOMER ORDERS
 
-    // save orders to file
+    // Save orders to a JSON file
     public void saveOrders() {
-
         try {
             fileWriter = new FileWriter(ordersFilePath);
 
             JSONObject categoriesJSON = new JSONObject();
 
-            // Group orders by category (order ID)
             for (Customer customer : customers) {
                 for (Order order : customer.getOrders()) {
-
                     JSONObject orderJSONObject = new JSONObject();
                     orderJSONObject.put("ID", order.getID());
                     orderJSONObject.put("Items", order.getItems());
@@ -162,7 +145,7 @@ public class Database {
                         itemsString.append(item.getCategory() + "-" + item.getItemName() + ",");
                     }
 
-                    itemsString.deleteCharAt(itemsString.length() - 1); // delete last comma
+                    itemsString.deleteCharAt(itemsString.length() - 1);
                     orderJSONObject.put("Items", itemsString.toString());
 
                     JSONArray categoryArray = (categoriesJSON.containsKey(category))
@@ -172,7 +155,7 @@ public class Database {
                     categoriesJSON.put(category, categoryArray);
                 }
             }
-            // Write categories JSON to file
+
             fileWriter.write(categoriesJSON.toJSONString());
             System.out.println("ORDERS JSON CREATED AND SAVED");
             fileWriter.close();
@@ -181,8 +164,7 @@ public class Database {
         }
     }
 
-
-    // create new order
+    // Create a new order for a customer
     public void createOrder(Order order) {
         for (Customer customer : customers) {
             if (customer.getID().equals(order.getID())) {
@@ -198,14 +180,13 @@ public class Database {
 
     // PAYMENTS //////////////////////////////////
 
-    // save payments to file
+    // Save payments to a JSON file
     public void savePayments() {
         try {
             fileWriter = new FileWriter(paymentsFilePath);
 
             JSONObject categoriesJSON = new JSONObject();
 
-            // Group payments by category (payment ID)
             for (Customer customer : customers) {
                 for (int i = 0; i < customer.getPayments().size(); i++) {
                     Payment payment = customer.getPayments().get(i);
@@ -227,7 +208,6 @@ public class Database {
                 }
             }
 
-            // Write categories JSON to file
             fileWriter.write(categoriesJSON.toJSONString());
             System.out.println("PAYMENT JSON CREATED AND SAVED");
             fileWriter.close();
@@ -237,28 +217,25 @@ public class Database {
 
     }
 
-    //  load payment
+    // Load payments from a JSON file
     public void loadPayments() {
-        // Clear all listed payments
         for (Customer customer : customers) {
             customer.getPayments().clear();
         }
         try {
-            // LOAD PAYMENTS---------------------------------------------
-            JSONParser parser = new JSONParser(); // Create JSON parser
-            JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(paymentsFilePath)); // Create JSON object from file
-
+            JSONParser parser = new JSONParser();
+            JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(paymentsFilePath));
 
             System.out.println("LOADING PAYMENTS --------------");
 
-            for (Object categoryKey : categoriesJSON.keySet()) { // For each category (customer ID)
+            for (Object categoryKey : categoriesJSON.keySet()) {
                 String category = (String) categoryKey;
-                JSONArray paymentsArray = (JSONArray) categoriesJSON.get(category); // Get payments array
+                JSONArray paymentsArray = (JSONArray) categoriesJSON.get(category);
 
-                for (Object paymentJSON : paymentsArray) { // For each payment JSON in category
-                    JSONObject paymentObj = (JSONObject) paymentJSON; // Create payment object from JSON
+                for (Object paymentJSON : paymentsArray) {
+                    JSONObject paymentObj = (JSONObject) paymentJSON;
 
-                    String ID = (String) paymentObj.get("ID"); // In this case, the category is the ID
+                    String ID = (String) paymentObj.get("ID");
                     String cardName = (String) paymentObj.get("Card_Name");
                     String cardNumber = (String) paymentObj.get("Card_Number");
                     String expDate = (String) paymentObj.get("Exp_Date");
@@ -281,25 +258,25 @@ public class Database {
         }
     }
 
+    // MENU //////////////////////////////////
 
-    // MENU //////////////////////////////////////////////////
+    // Load menu items from a JSON file
     public void loadMenu() {
         menu.clear(); // Clear the current menu list
         prebuiltPizzas.clear(); // Clear the current prebuilt pizza list
 
         try {
-            JSONParser parser = new JSONParser(); // Create JSON parser
-            JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(menuFilePath)); // Create JSON object from file
-
+            JSONParser parser = new JSONParser();
+            JSONObject categoriesJSON = (JSONObject) parser.parse(new FileReader(menuFilePath));
 
             System.out.println("LOADING MENU --------------");
 
-            for (Object categoryKey : categoriesJSON.keySet()) { // For each category
+            for (Object categoryKey : categoriesJSON.keySet()) {
                 String category = (String) categoryKey;
                 JSONArray categoryArray = (JSONArray) categoriesJSON.get(category);
 
-                for (Object menuItemJSON : categoryArray) { // For each menu item JSON in category
-                    JSONObject menuItemObj = (JSONObject) menuItemJSON; // Create menu item object from JSON
+                for (Object menuItemJSON : categoryArray) {
+                    JSONObject menuItemObj = (JSONObject) menuItemJSON;
 
                     String typeID = (String) menuItemObj.get("Type");
                     String itemName = (String) menuItemObj.get("Item_Name");
@@ -323,6 +300,7 @@ public class Database {
         }
     }
 
+    // Load a prebuilt pizza from a JSON object
     private PrebuiltPizza loadPrebuiltPizza(JSONObject menuItemObj) {
         String typeID = (String) menuItemObj.get("Type");
         String itemName = (String) menuItemObj.get("Item_Name");
@@ -346,13 +324,13 @@ public class Database {
         return new PrebuiltPizza(typeID, "PREBUILT", itemName, price, crustType, toppings);
     }
 
+    // Getter for the prebuilt pizzas list
     public LinkedList<PrebuiltPizza> getPrebuiltPizzas() {
         return prebuiltPizzas;
     }
 
-    public LinkedList<MenuItem> getMenu() { // return all menu items
+    // Getter for the menu items list
+    public LinkedList<MenuItem> getMenu() {
         return menu;
     }
-
-
 }

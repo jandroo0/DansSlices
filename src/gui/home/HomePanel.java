@@ -20,92 +20,85 @@ import java.util.LinkedList;
 
 public class HomePanel extends CustomPanel {
 
-    private final CustomButton menuButton; // button for menu
-    private final CustomButton orderHistoryButton; // button for orderHistory
-    private final CustomButton accountButton; // button for account details
+    // Navigation buttons
+    private final CustomButton menuButton;
+    private final CustomButton orderHistoryButton;
+    private final CustomButton accountButton;
 
+    // Panels
+    private final JPanel containerPanel;
+    private final CustomPanel buttonPanel;
+    private final MenuPanel menuPanel;
+    private final CheckoutPanel checkoutPanel;
 
-    private final JPanel containerPanel; // container for buttonPanel, menuPanel, and other panels
-
-
-    private final CustomPanel buttonPanel; // buttonPanel to display navigation buttons
-    private final MenuPanel menuPanel; // add the menuPanel
-
-    private final CheckoutPanel checkoutPanel; // checkoutPanel to display
-
-    // TODO:
-//    private AccountPanel accountPanel;
-//    private OrderHistoryPanel orderHistoryPanel;
-    private Customer currentCustomer; // current customer
-
+    private Customer currentCustomer; // Current customer
     private HomeListener homeListener;
 
     public HomePanel() {
-
         currentCustomer = null;
 
-        // home panel buttons
+        // Initialize navigation buttons
+        int buttonSize = 32;
+        menuButton = new CustomButton("MENU", Config.getTextFont(buttonSize), Config.getTextColor(),
+                Config.getButtonBackgroundColor(), Config.getButtonHoverColor(), Config.getButtonBorder());
+        orderHistoryButton = new CustomButton("ORDERS", Config.getTextFont(buttonSize), Config.getTextColor(),
+                Config.getButtonBackgroundColor(), Config.getButtonHoverColor(), Config.getButtonBorder());
+        accountButton = new CustomButton("ACCOUNT", Config.getTextFont(buttonSize), Config.getTextColor(),
+                Config.getButtonBackgroundColor(), Config.getButtonHoverColor(), Config.getButtonBorder());
 
-        int buttonSize = 32; // button size
-
-        menuButton = new CustomButton("MENU", Config.getTextFont(buttonSize), Config.getTextColor(), Config.getButtonBackgroundColor(),
-                Config.getButtonHoverColor(), Config.getButtonBorder());
-        orderHistoryButton = new CustomButton("ORDERS", Config.getTextFont(buttonSize), Config.getTextColor(), Config.getButtonBackgroundColor(),
-                Config.getButtonHoverColor(), Config.getButtonBorder());
-        accountButton = new CustomButton("ACCOUNT", Config.getTextFont(buttonSize), Config.getTextColor(), Config.getButtonBackgroundColor(),
-                Config.getButtonHoverColor(), Config.getButtonBorder());
-
-        //panels
-        buttonPanel = new CustomPanel(); // container buttonPanel for buttons
-
-        menuPanel = new MenuPanel(); // menu panel
-
-        checkoutPanel = new CheckoutPanel(); // checkout panel
-
-        containerPanel = new JPanel(new CardLayout()); // create card layout in container panel
-        containerPanel.add(buttonPanel, "BUTTON_PANEL"); // add buttonPanel to container panel
+        // Initialize panels
+        buttonPanel = new CustomPanel();
+        menuPanel = new MenuPanel();
+        checkoutPanel = new CheckoutPanel();
+        containerPanel = new JPanel(new CardLayout());
+        containerPanel.add(buttonPanel, "BUTTON_PANEL");
         containerPanel.add(menuPanel, "MENU_PANEL");
         containerPanel.add(checkoutPanel, "CHECKOUT_PANEL");
 
+        // Set default panel to show (BUTTON_PANEL)
         CardLayout cl = (CardLayout) containerPanel.getLayout();
-        cl.show(containerPanel, "BUTTON_PANEL"); // show the default home/button panel which contains the nav buttons i.e (menu, etc
+        cl.show(containerPanel, "BUTTON_PANEL");
 
-
+        // Layout components and set up the initial view
         layoutComponents();
         setLayout(new BorderLayout());
         add(containerPanel, BorderLayout.CENTER);
 
+        // Set up event handling
         handleEvents();
     }
 
-
     private void handleEvents() {
-        // menuButton event listener
+        // MenuButton event listener
         menuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                HomePanel.this.homeListener.menuClickedEvent(currentCustomer);
-
+                // Handle menu button click event
                 CardLayout cl = (CardLayout) containerPanel.getLayout();
                 cl.show(containerPanel, "MENU_PANEL");
             }
         });
+
+        // TODO: Add event listeners for other buttons as needed
     }
 
+    // Set the current customer for the panel
     public void setCustomer(Customer customer) {
         currentCustomer = customer;
 
+        // Set the customer for menu and checkout panels
         menuPanel.setCustomer(customer);
         checkoutPanel.setCustomer(customer);
     }
 
+    // Set up the checkout panel with an order
     public void setCheckoutPanel(Order newOrder) {
         checkoutPanel.setOrder(newOrder);
         checkoutPanel.setPaymentOptions();
     }
 
-
-    public void setMenuItems(LinkedList<model.MenuItem> items, LinkedList<PrebuiltPizza> pizzas) {
+    // Set menu items for the menu panel
+    public void setMenuItems(LinkedList<MenuItem> items, LinkedList<PrebuiltPizza> pizzas) {
         LinkedList<MenuItem> menu = new LinkedList<>();
         menu.addAll(items);
         menu.addAll(pizzas);
@@ -113,14 +106,17 @@ public class HomePanel extends CustomPanel {
         menuPanel.setMenu(menu);
     }
 
-    public void setHomeListener(HomeListener listener) { // set listener for home panel events
+    // Set the home listener for handling home panel events
+    public void setHomeListener(HomeListener listener) {
         this.homeListener = listener;
     }
 
-    public void setMenuListener(MenuListener listener) { // set the listener for the menuPanel
+    // Set the menu listener for handling menu panel events
+    public void setMenuListener(MenuListener listener) {
         menuPanel.setMenuListener(listener);
     }
 
+    // Getters for panels
     public MenuPanel getMenuPanel() {
         return menuPanel;
     }
@@ -129,10 +125,9 @@ public class HomePanel extends CustomPanel {
         return containerPanel;
     }
 
-
+    // Layout components in the button panel
     private void layoutComponents() {
-
-        // employee homePanel
+        // Layout for the button panel
         Border border = BorderFactory.createEmptyBorder(0, 0, 100, 0);
         buttonPanel.setBorder(border);
         buttonPanel.setLayout(new GridBagLayout());
